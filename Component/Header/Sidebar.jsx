@@ -322,11 +322,11 @@ const Sidebar = () => {
         </div>
       </aside>
       <div className="ml-auto mb-6 lg:w-[75%] xl:w-[80%] 2xl:w-[85%]">
-        <div className="sticky top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5">
-          <div className="flex items-center justify-between space-x-4 px-6 2xl:container">
+        <div className="sticky top-0 h-16 border-b bg-white dark:bg-gray-800 dark:border-gray-700 lg:py-2.5 z-20">
+          <div className="flex items-center justify-between space-x-4 px-6 2xl:container ">
             <h5
               hidden
-              className="text-2xl font-medium text-gray-600 lg:block dark:text-white"
+              className="text-2xl font-medium text-gray-600 lg:block dark:text-white "
             >
               Dashboard
             </h5>
