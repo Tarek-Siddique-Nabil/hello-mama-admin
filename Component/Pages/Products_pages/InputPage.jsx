@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { CustomHookContext } from "../../../src/Hooks/useHooks";
+import axios from "axios";
 
 const InputPage = () => {
   const { post, postCategory, categories, deleteCategory, deleteSubCategory } =
@@ -41,27 +42,108 @@ const InputPage = () => {
   ]);
   console.log(variableList);
 
-  const variableChange = (e, index) => {
+  const variableChange = async (e, index) => {
     e.preventDefault();
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
+    console.log("🚀 ~ file: InputPage.jsx:48 ~ variableChange ~ files:", files);
     const list = [...variableList];
-    list[index][name] = value;
+    if (name === "image" && files.length > 0) {
+      const formData = new FormData();
+      formData.append("image", files[0]);
+      try {
+        const res = await axios.post("http://localhost:5000/upload", formData);
+        list[index][name] = res.data.imageUrl;
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      list[index][name] = value;
+    }
+
     setVariableList(list);
   };
 
+  // const variableChange = async (e, index) => {
+  //   e.preventDefault();
+  //   const { name, value, files } = e.target;
+  //   const list = [...variableList];
+
+  //   // Check if the user has uploaded a file
+  //   if (files && files[0]) {
+  //     const file = files[0];
+
+  //     // Create a FormData object to send to imgbb
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+  //     formData.append("key", "b7d2ce33938a7fea6c2fd409cf1e66ff"); // Replace with your own imgbb API key
+
+  //     // Upload the image to imgbb using their API
+  //     const response = await fetch("https://api.imgbb.com/1/upload", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+  //     const result = await response.json();
+
+  //     // Set the image URL in the variableList state
+  //     list[index]["image"] = result.data.url;
+  //   } else {
+  //     // Set the other form values in the variableList state
+  //     list[index][name] = value;
+  //   }
+
+  //   setVariableList(list);
+  // };
+
   const variableListRemove = (index) => {
-    console.log("🚀 ~ file: InputPage.jsx:53 ~ variableListRemove ~ index:", index)
+    console.log(
+      "🚀 ~ file: InputPage.jsx:53 ~ variableListRemove ~ index:",
+      index
+    );
     const list = [...variableList];
-    setVariableList(list.splice(index,1));
+    setVariableList(list.splice(index, 1));
   };
 
   const variableListAdd = () => {
     setVariableList([...variableList, { price: "", variety: "", image: "" }]);
   };
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const { files } = e.target;
+    console.log(e.target.base_image.value);
+    console.log("🚀 ~ file: InputPage.jsx:115 ~ onSubmit ~ files:", files);
+    const formData = new FormData();
+    formData.append("base_image", files[0]);
+    try {
+      const res = await axios.post(
+        "https://api.imgbb.com/1/upload?key=b7d2ce33938a7fea6c2fd409cf1e66ff",
+        formData
+      );
+      if (res.data) {
+        const product = {
+          title: e.target.title.value,
+          price: e.target.price.value,
+          priceb2b: e.target.b2b_price.value,
+          shipping: e.target.shipping.value,
+          description: e.target.description.value,
+          category: e.target.category.value,
+          subCategory: e.target.subCategory.value,
+          image: res?.data?.data.url,
+          spec: highLightPointList || [],
+        };
+        console.log(
+          "🚀 ~ file: InputPage.jsx:134 ~ onSubmit ~ product:",
+          product
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="flex justify-between items-center">
-      <form className="flex flex-col w-60 gap-5 ">
+      <form className="flex flex-col w-60 gap-5 " onSubmit={onSubmit}>
         <div className="form-control">
           <label className="label">
             <span className="label-text">Enter Title</span>
@@ -71,6 +153,7 @@ const InputPage = () => {
             <input
               type="text"
               placeholder="Title"
+              name="title"
               className="input input-bordered"
             />
           </label>
@@ -86,6 +169,7 @@ const InputPage = () => {
               min="1"
               type="number"
               placeholder="Price"
+              name="price"
               className="input input-bordered"
             />
           </label>
@@ -101,6 +185,7 @@ const InputPage = () => {
               min="1"
               type="number"
               placeholder="B2B Price"
+              name="b2b_price"
               className="input input-bordered"
             />
           </label>
@@ -148,6 +233,7 @@ const InputPage = () => {
               min="1"
               type="number"
               placeholder="Shipping"
+              name="shipping"
               className="input input-bordered"
             />
           </label>
@@ -156,6 +242,7 @@ const InputPage = () => {
         <textarea
           className="textarea textarea-accent"
           placeholder="Description"
+          name="description"
         ></textarea>
         <p className="font-bold">HighLight Points:-</p>
         {highLightPointList?.map((item, index) => (
@@ -227,6 +314,7 @@ const InputPage = () => {
         <input
           type="file"
           className="file-input file-input-bordered file-input-secondary w-full max-w-xs"
+          name="base_image"
         />
 
         {variableList?.map((item, index) => (
@@ -241,21 +329,18 @@ const InputPage = () => {
                   type="number"
                   inputMode="numeric"
                   placeholder={`Price ${index + 1}`}
-                  value={item?.price}
                   min="1"
                   className="outline-1 border-2 rounded-lg border-gray-800 dark:border-blue-500  focus:outline-red-600 h-10 px-2"
                 />
                 <input
                   name="variety"
                   type="text"
-                  value={item?.variety}
                   placeholder={`Variety ${index + 1}`}
                   className="outline-1 border-2 rounded-lg border-gray-800 dark:border-blue-500  focus:outline-red-600 h-10 px-2"
                 />
                 <input
                   name="image"
                   type="file"
-                  value={item?.image}
                   className="outline-1 border-2 rounded-lg border-gray-800 dark:border-blue-500  focus:outline-red-600 h-10 px-2"
                 />
               </form>
@@ -326,7 +411,11 @@ const InputPage = () => {
         <input
           className="outline-1 border-2 rounded-lg border-gray-800 dark:border-blue-500  focus:outline-red-600 h-10 px-2"
           placeholder="Unit"
+          name="unit"
         />
+        <button className="border border-black rounded-xl " type="submit">
+          Submit
+        </button>
       </form>
       <div>
         <div className="collapse">
