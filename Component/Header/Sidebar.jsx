@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import Dashboard from "../Pages/Dashboard";
+import Dashboard from "../../src/Component/DashBoard/Dashboard";
 import Offer from "../Pages/Offer";
 import Order from "../Pages/Order";
 import Payments from "../Pages/Payments";

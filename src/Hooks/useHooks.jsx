@@ -1,11 +1,16 @@
+import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 export const CustomHookContext = createContext();
 
 export const ContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  console.log(
+    "🚀 ~ file: useHooks.jsx:10 ~ ContextProvider ~ categories:",
+    categories
+  );
   const [loading, setLoading] = useState(false);
 
   ///product
@@ -17,9 +22,8 @@ export const ContextProvider = ({ children }) => {
     setLoading(false);
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setProducts(data);
+        const response = await axios.get(url);
+        setProducts(response.data);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -34,26 +38,22 @@ export const ContextProvider = ({ children }) => {
     setLoading(true);
     try {
       const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/product`;
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await axios.post(url, body, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
       });
-      const json = await response.json();
+      const json = response.data;
       setLoading(false);
       if (json) {
         toast.success("Product added Successfully", {
           position: "top-center",
-          autoClose: 1000,
         });
       }
       setProducts([...products, json]);
     } catch (err) {
       toast.error(`Something error`, {
         position: "top-center",
-        autoClose: 1500,
       });
     }
   };
@@ -62,20 +62,19 @@ export const ContextProvider = ({ children }) => {
   const update = async (id, body) => {
     setLoading(true);
     try {
-      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/product/${id}`;
-      const response = await fetch(url, {
-        method: "PUT",
+      const url = `${
+        import.meta.env.VITE_APP_SECRET_SERVER_SIDE
+      }/product/${id}`;
+      const response = await axios.put(url, body, {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify(body),
       });
-      const json = await response.json();
+      const json = response.data;
       setLoading(false);
       if (json) {
         toast.success("Product Update Successfully", {
           position: "top-center",
-          autoClose: 1200,
         });
       }
       const index = products.findIndex((item) => item._id === id);
@@ -85,7 +84,6 @@ export const ContextProvider = ({ children }) => {
     } catch (err) {
       toast.error(err.message, {
         position: "top-center",
-        autoClose: 1200,
       });
     }
   };
@@ -94,31 +92,26 @@ export const ContextProvider = ({ children }) => {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/product/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      const data = await response.json();
+      const url = `${
+        import.meta.env.VITE_APP_SECRET_SERVER_SIDE
+      }/product/${id}`;
+      const response = await axios.delete(url);
+      const data = response.data;
 
       if (data) {
         toast.success("product delete", {
           position: "top-center",
-          autoClose: 1000,
         });
         // Remove the deleted item from the existing data
         setProducts((data) => data.filter((item) => item._id !== id));
       } else {
         toast.error("Something error ", {
           position: "top-center",
-          autoClose: 1000,
         });
       }
     } catch (error) {
       toast.error("Something error ", {
         position: "top-center",
-        autoClose: 1000,
       });
     }
   };
@@ -132,8 +125,8 @@ export const ContextProvider = ({ children }) => {
     setLoading(true);
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
-        const data = await response.json();
+        const response = await axios.get(url);
+        const data = response.data;
         setCategories(data);
         setLoading(false);
       } catch (err) {
@@ -148,26 +141,24 @@ export const ContextProvider = ({ children }) => {
     setLoading(true);
     try {
       const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/category`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-      const json = await response.json();
+      const response = await axios.post(url, body);
+      const json = response.data;
       setLoading(false);
-      if (json) {
-        toast.success("Category added Successfully", {
+
+      if (body?.category && json) {
+        setCategories(json);
+        toast.success("Sub-Category Created Successfully", {
           position: "top-center",
-          autoClose: 1000,
+        });
+      } else if (body?.newCategory) {
+        setCategories((prevCategories) => [...prevCategories, json]);
+        toast.success("Category Created Successfully", {
+          position: "top-center",
         });
       }
-      setCategories([...categories, json]);
     } catch (err) {
       toast.error(err.message, {
         position: "top-center",
-        autoClose: 1500,
       });
     }
   };
@@ -175,43 +166,38 @@ export const ContextProvider = ({ children }) => {
   const deleteCategory = async (id) => {
     const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/category/${id}`;
     try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
-      const data = await response.json();
-      if (data) {
-        toast.success("Category delete", {
+      const response = await axios.delete(url);
+      if (response.data) {
+        toast.success("Category deleted", {
           position: "top-center",
-          autoClose: 1000,
         });
       }
       setCategories((data) => data.filter((item) => item._id !== id));
-    } catch (err) {
-      toast.error(err.message, {
+    } catch (error) {
+      toast.error(error.message, {
         position: "top-center",
-        autoClose: 1200,
       });
     }
   };
+
   // ----------------------------------------------------------Delete SubCategory----------------------------------------------------------
   const deleteSubCategory = async (idCategory, idSubCategory) => {
-    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/sub-category/${idCategory}/${idSubCategory}`;
     try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
-      const data = await response.json();
+      const response = await axios.delete(
+        `${
+          import.meta.env.VITE_APP_SECRET_SERVER_SIDE
+        }/sub-category/${idCategory}/${idSubCategory}`
+      );
+      const data = response.data;
       if (data) {
-        toast.success("Category delete", {
+        toast.success("Subcategory deleted successfully", {
           position: "top-center",
-          autoClose: 1000,
         });
       }
       setCategories(data);
     } catch (err) {
       toast.error(err.message, {
         position: "top-center",
-        autoClose: 1200,
       });
     }
   };

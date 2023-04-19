@@ -1,20 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ProductInput from "./Input_Types/ProductInput";
-import CategoryInput from "./Input_Types/CategoryInput";
-import UnitInput from "./Input_Types/UnitInput";
+import Product_Input from "../Pages/Product_Input";
+import Category_Input from "../Pages/Category_Input";
+import Unit from "../Pages/Unit";
+import { CustomHookContext } from "../../../Hooks/useHooks";
 
-const InputPage = () => {
+const InputPagesNavigation = () => {
   const tabs = [
-    { icon: "📦", label: "Product", scene: <ProductInput /> },
-    { icon: "🗒️", label: "Category", scene: <CategoryInput /> },
-    { icon: "⚡", label: "Unit", scene: <UnitInput /> },
+    {
+      icon: "📦",
+      label: "Product",
+      scene: <Product_Input />,
+    },
+    {
+      icon: "🗒️",
+      label: "Category",
+      scene: <Category_Input />,
+    },
+    { icon: "⚡", label: "Unit", scene: <Unit /> },
   ];
   const [selectedTab, setSelectedTab] = useState({
     label: "Product",
-    scene: <ProductInput />,
+    scene: <Product_Input />,
   });
-
   return (
     <>
       <style>
@@ -45,7 +53,8 @@ const InputPage = () => {
           }
         `}
       </style>
-      <div className="p-4 border-2 border-black">
+      <div className="container lg:px-16 py-5 mx-auto border">
+        <p className="text-lg font-semibold text-center mb-3">Input Pages</p>
         <nav>
           <div className="flex justify-center gap-5">
             {tabs.map((item, index) => (
@@ -90,4 +99,4 @@ const InputPage = () => {
   );
 };
 
-export default InputPage;
+export default InputPagesNavigation;

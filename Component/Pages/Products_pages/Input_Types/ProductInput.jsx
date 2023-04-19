@@ -112,11 +112,18 @@ const ProductInput = () => {
       spec: highLightPointList || [],
       productVariant: variableList || [],
     };
+    console.log(
+      "🚀 ~ file: ProductInput.jsx:115 ~ onSubmit ~ product:",
+      product
+    );
     await post(product);
   };
   return (
     <div>
-      <form className="flex flex-col w-60 gap-5 " onSubmit={onSubmit}>
+      <form
+        className="grid grid-cols-1  items-center gap-5 "
+        onSubmit={onSubmit}
+      >
         <div className="form-control">
           <label className="label">
             <span className="label-text">Enter Title</span>

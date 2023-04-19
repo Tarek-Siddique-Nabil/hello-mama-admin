@@ -1,11 +1,12 @@
-import React from 'react';
+import React from "react";
 
 const CategoryInput = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return (
+    <div>
+      <section></section>
+      <section></section>
+    </div>
+  );
 };
 
 export default CategoryInput;

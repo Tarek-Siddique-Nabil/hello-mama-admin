@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "../Header/Sidebar";
-import Dashboard from "../Pages/Dashboard";
+import Dashboard from "../../src/Component/DashBoard/Dashboard";
 
 const Body = () => {
   return (

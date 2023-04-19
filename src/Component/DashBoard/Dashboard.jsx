@@ -99,8 +99,13 @@ const Dashboard = () => {
               </div>
               <div className="ml-3">
                 <h3 className="font-bold">Sunny Leone</h3>
-                <div className="text-md"><span className="font-bold">Email:</span> Email:dddd@ gmail.com</div>
-                <div className="text-md "><span className="font-bold">Number:</span> dddd@ gmail.com</div>
+                <div className="text-md">
+                  <span className="font-bold">Email:</span> Email:dddd@
+                  gmail.com
+                </div>
+                <div className="text-md ">
+                  <span className="font-bold">Number:</span> dddd@ gmail.com
+                </div>
               </div>
             </div>
             <div className="flex-none">
