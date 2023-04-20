@@ -62,7 +62,7 @@ const Category_Input = () => {
   };
   return (
     <>
-      <div className="flex gap-4 mt-3  h-screen">
+      <div className="flex  gap-4 mt-3  h-screen">
         <div className="w-1/2 ">
           <p className="text-lg font-bold text-center">Existing Category</p>
           {categories?.map((item, index) => (

@@ -131,10 +131,10 @@ const Product_Input = () => {
   return (
     <>
       <form
-        className="grid grid-cols-1  items-center gap-5 "
+        className="-z-30 grid grid-cols-1  items-center gap-5 "
         onSubmit={onSubmit}
       >
-        <div className="form-control">
+        <div className="form-control -z-30">
           <label className="label">
             <span className="label-text">Enter Title</span>
           </label>
@@ -149,7 +149,7 @@ const Product_Input = () => {
             />
           </label>
         </div>
-        <div className="form-control">
+        <div className="form-control -z-30">
           <label className="label">
             <span className="label-text">Enter Price</span>
           </label>
@@ -166,7 +166,7 @@ const Product_Input = () => {
             />
           </label>
         </div>
-        <div className="form-control">
+        <div className="form-control -z-30">
           <label className="label">
             <span className="label-text">Enter B2B Price</span>
           </label>
