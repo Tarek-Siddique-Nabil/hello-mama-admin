@@ -1,18 +1,18 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-
+// import { io } from "socket.io-client";
 export const CustomHookContext = createContext();
 
 export const ContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  console.log(
-    "🚀 ~ file: useHooks.jsx:10 ~ ContextProvider ~ categories:",
-    categories
-  );
+  const [allOrders, setAllOrders] = useState([]);
+  const [newOrder, setNewOrder] = useState([]);
+  const [packagingOrder, setpackagingOrder] = useState([]);
+  const [shipmentOrder, setshipmentOrder] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  // const socket = io(`${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/mew-order`);
   ///product
 
   // ----------------------------------------------------------product get----------------------------------------------------------
@@ -201,6 +201,74 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
+
+  // ------------------------------------------------------- Order -----------------------------------------//
+
+  //  -----------------------------------------GET ALL ORDERS --------------------------//
+  useEffect(() => {
+    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/order`;
+    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+        let orderData = response?.data;
+        setAllOrders(orderData);
+        // filtering for order ststus wise//
+
+        const newOrderData = orderData.filter(
+          (item) => item.status === "processing"
+        );
+        setNewOrder(newOrderData);
+        const packagingOrderData = orderData.filter(
+          (item) => item?.status === "packaging"
+        );
+        setpackagingOrder(packagingOrderData);
+        const shipmentOrderData = orderData.filter(
+          (item) => item?.status === "shipment"
+        );
+        setshipmentOrder(shipmentOrderData);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  //  ----------------------------------------Order Status Change ----------------------------//
+  const orderStatus = async (id, body) => {
+    console.log(
+      "🚀 ~ file: useHooks.jsx:241 ~ orderStatus ~ body:",
+      body.status
+    );
+    try {
+      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/order/${id}`;
+      const response = await axios.put(url, body, {
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+      if (response.data) {
+        setTimeout(() => {
+          toast.success("Order Status Change", {
+            position: "top-center",
+          });
+        }, 500);
+      }
+      if (response && body?.status === "packaging") {
+        setNewOrder((data) => data.filter((item) => item._id !== id));
+        setpackagingOrder([...packagingOrder, response?.data]);
+      }
+      if (response && body?.status === "shipment") {
+        setpackagingOrder((data) => data.filter((item) => item._id !== id));
+        setshipmentOrder([...shipmentOrder, response?.data]);
+      }
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <CustomHookContext.Provider
       value={{
@@ -213,6 +281,10 @@ export const ContextProvider = ({ children }) => {
         postCategory,
         deleteCategory,
         deleteSubCategory,
+        newOrder,
+        packagingOrder,
+        shipmentOrder,
+        orderStatus,
       }}
     >
       {children}
