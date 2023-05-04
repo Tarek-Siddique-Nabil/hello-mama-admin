@@ -6,7 +6,7 @@ const TableEdit = () => {
   return (
     <>
       <div className="overflow-x-auto w-full ">
-        <table className="table w-full ">
+        <table className="text-left -z-50  w-full ">
           <thead>
             <tr>
               <th></th>
@@ -19,7 +19,7 @@ const TableEdit = () => {
           <tbody>
             {products?.map((item, index) => (
               <tr key={index}>
-                <th>
+                <th className="items-center p-4 whitespace-nowrap">
                   <label>
                     <input type="checkbox" className="checkbox" />
                   </label>
@@ -49,8 +49,23 @@ const TableEdit = () => {
                     <span>{item.subCategory}</span>
                   </span>
                 </td>
-                <td>{item?.price}</td>
-                <td>{item?.priceb2b}</td>
+                <td>
+                  <input
+                    className="p-1 border border-cyan-700 rounded-xl"
+                    inputMode="decimal"
+                    type="number"
+                    placeholder={item?.price}
+                  />
+                </td>
+                <td>
+                  {" "}
+                  <input
+                    className="p-1 border border-cyan-700 rounded-xl"
+                    inputMode="decimal"
+                    type="number"
+                    placeholder={item?.priceb2b}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>

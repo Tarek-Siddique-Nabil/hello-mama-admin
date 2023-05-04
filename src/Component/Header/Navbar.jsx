@@ -53,7 +53,7 @@ const Navbar = () => {
   };
   return (
     <>
-      <div className={isFloating ? "fixed  w-full bg-white z-50" : ""}>
+      <div className={isFloating ? "fixed  w-full bg-white z-50" : "z-50"}>
         <section className=" ">
           <div className="fixed top-0 bottom-0 left-0 " onClick={handleToggle}>
             <motion.div
@@ -64,7 +64,7 @@ const Navbar = () => {
           </div>
 
           <motion.div
-            className=" top-0 bottom-0 left-0 bg-gray-200  fixed"
+            className=" top-0 bottom-0 left-0 bg-gray-200  fixed z-50"
             variants={menuVariants}
             animate={isOpen ? "open" : "closed"}
             initial="closed"
