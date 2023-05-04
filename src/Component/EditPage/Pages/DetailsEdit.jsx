@@ -3,7 +3,7 @@ import { CustomHookContext } from "../../../Hooks/useHooks";
 import { toast } from "react-hot-toast";
 
 const DetailsEdit = () => {
-  const { products } = useContext(CustomHookContext);
+  const { products, update } = useContext(CustomHookContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const [input, setinput] = useState(null);
   const output = [];
@@ -39,56 +39,73 @@ const DetailsEdit = () => {
   const alreadyShownToast = useRef(false);
   if (title || price || priceb2b || description) {
     if (!alreadyShownToast.current) {
-      toast.custom((t) => (
-        <div className="bg-slate-100 border border-gray-900 rounded-xl shadow-lg shadow-cyan-200  flex  justify-center items-center w-auto h-10 p-2 gap-2">
-          <p className="text-xl font-semibold">Product Data Changes</p>
-          <div className=" flex items-center gap-2">
-            <button onClick={() => toast.dismiss(t.id)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 text-red-400 border border-black rounded-full"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 text-green-600 border border-black rounded-full"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 12.75l6 6 9-13.5"
-                />
-              </svg>
-            </button>
+      toast.custom(
+        (t) => (
+          <div className="bg-slate-100 border border-gray-900 rounded-xl shadow-lg shadow-cyan-200  flex  justify-center items-center w-auto h-10 p-2 gap-2">
+            <p className="text-xl font-semibold">Product Data Changes</p>
+            <div className=" flex items-center gap-2">
+              <button onClick={() => toast.dismiss(t.id)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 text-red-400 border border-black rounded-full"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <button onClick={() => handleSubmited()}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 text-green-600 border border-black rounded-full"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 12.75l6 6 9-13.5"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      ));
-      alreadyShownToast.current = false;
+        ),
+        {
+          position: "bottom-center",
+          duration: Infinity,
+        }
+      );
+      alreadyShownToast.current = true;
     }
   }
-  const handleSubmited = () => {
+  const handleSubmited = async () => {
     const data = {
       title: title || selectedItem?.title,
       price: price || selectedItem?.price,
-      priceb2b: priceb2b || selectedItem?.priceb2b,
+      priceb2b: priceb2b,
+      shipping: selectedItem?.shipping,
+      category: selectedItem?.category,
+      subCategory: selectedItem?.subCategory,
+      image: selectedItem?.image,
       description: description || selectedItem?.description,
-      highLightPoint: highLightPointList,
+      spec: highLightPointList,
     };
+    console.log(data);
+    // await update(selectedItem?._id, data);
+    // setSelectedItem(null);
+    // setTitle(null);
+    // setprice(null);
+    // setPriceb2b(null);
+    // setDescription(null);
   };
   return (
     <>
@@ -168,7 +185,6 @@ const DetailsEdit = () => {
                               &#x2022;
                             </span>
                             <input
-                              name="highLightPoint"
                               id={`highLightPoint-${index}`}
                               onChange={(e) => highLightPointChange(e, index)}
                               className="w-full"
@@ -181,11 +197,13 @@ const DetailsEdit = () => {
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
                           <input
+                            type="number"
                             onChange={(e) => setprice(e.target.value)}
                             className="w-full font-medium text-2xl text-gray-900 mr-3 "
                             defaultValue={selectedItem?.price}
                           />
                           <input
+                            type="number"
                             onChange={(e) => setPriceb2b(e.target.value)}
                             className="w-full font-medium text-2xl text-gray-900 mr-3 "
                             defaultValue={selectedItem?.priceb2b}
@@ -201,9 +219,6 @@ const DetailsEdit = () => {
                       </div>
                     </div>
                   </div>
-                  <button type="submit" onClick={() => handleSubmited()}>
-                    Submit
-                  </button>
                 </div>
               </section>
             </div>

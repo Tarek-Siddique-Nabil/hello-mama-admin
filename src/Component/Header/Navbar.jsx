@@ -3,7 +3,14 @@ import { Link, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
-  const navigationPath = ["dashboard", "input", "order", "edit", "offer"];
+  const navigationPath = [
+    "dashboard",
+    "input",
+    "order",
+    "edit",
+    "offer",
+    "sms",
+  ];
   const [isFloating, setIsFloating] = useState(false);
   const [selection, setSelection] = useState(null);
   const [isOpen, setIsOpen] = useState(false);

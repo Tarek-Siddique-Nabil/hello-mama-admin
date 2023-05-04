@@ -7,14 +7,14 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 import React, { createContext, useEffect, useState } from "react";
 import app from "../Firebase/firebase.config";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
 const auth = getAuth(app);
-const firestore = getFirestore(app);
 
 const FirebaseContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -22,24 +22,36 @@ const FirebaseContextProvider = ({ children }) => {
 
   const googleProvider = new GoogleAuthProvider();
 
-  const createUser = async (email, password, role) => {
+  const createUser = async (email, password, role, fullName) => {
+    const userRole = {
+      name: fullName,
+      email: email,
+      role: role,
+    };
+    console.log(
+      "🚀 ~ file: useFirebase.jsx:31 ~ createUser ~ userRole:",
+      userRole
+    );
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-
-      // Add user to Firestore with role
-      await firestore.collection("users").doc(user.uid).set({
-        email: user.email,
-        role: role,
+      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/role`;
+      const response = await axios.post(url, userRole, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      const json = response.data;
 
-      return user;
-    } catch (error) {
-      throw new Error(error.message);
+      if (json) {
+        toast.success("user created successfully", {
+          position: "top-center",
+        });
+        return createUserWithEmailAndPassword(auth, email, password);
+      }
+      console.log(json);
+    } catch (err) {
+      toast.error(`${err?.message}`, {
+        position: "top-center",
+      });
     }
   };
 
