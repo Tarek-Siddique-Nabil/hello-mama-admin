@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CustomHookContext } from "../../Hooks/useHooks";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -6,6 +6,21 @@ import axios from "axios";
 const Sms = () => {
   const { shipmentOrder, orderStatus } = useContext(CustomHookContext);
   const [input, setInput] = useState(null);
+  const [value, setValue] = useState(0);
+  const [randomNumber, setRandomNumber] = useState(null);
+  const [code, setcode] = useState(null);
+  useEffect(() => {
+    if (value <= 0) {
+      // Timer has expired, do something here
+      return;
+    }
+    const intervalId = setInterval(() => {
+      setValue((prevTimeRemaining) => prevTimeRemaining - 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [value]);
+
   const data = [];
 
   for (const order of shipmentOrder) {
@@ -16,26 +31,45 @@ const Sms = () => {
     }
   }
   const sendSms = (number) => {
-    const randomNumber = (Math.random() * 10000) / 10000;
+    const randomNum = Math.floor(Math.random() * 100000)
+      .toString()
+      .padStart(5, "0");
+    setRandomNumber(randomNum);
     const postSMS = async () => {
       try {
         const url = `http://sms.mayabd.org/smsapi?api_key=${
           import.meta.env.VITE_APP_SECRET_SMS_API_KEY
-        }&type=text&contacts=${number}&senderid=${
+        }&type=text&contacts=${number?.number}&senderid=${
           import.meta.env.VITE_APP_SECRET_SMS_API_SENDER_ID
-        }&msg=${randomNumber.toFixed(5)} `;
+        }&msg=${randomNum} `;
         const response = await axios.post(url);
         const json = response.data;
-        console.log("🚀 ~ file: Sms.jsx:22 ~ sendSms ~ json:", json);
+
+        if (json) {
+          toast.success("Message Send", {
+            position: "top-center",
+            duration: 1000,
+          });
+        }
       } catch (err) {
-        toast.error(err.message, {
-          position: "top-center",
-        });
+        console.log();
       }
     };
     postSMS(); // Call the postSMS function to send the SMS
+    setValue(60);
   };
-
+  const verify = async (id) => {
+    if (randomNumber === code)
+      await orderStatus(id, {
+        status: "successful",
+      });
+    else {
+      toast.error("CODE ERROR", {
+        position: "top-center",
+        duration: 1500,
+      });
+    }
+  };
   return (
     <>
       <div className="flex flex-col items-center">
@@ -117,18 +151,34 @@ const Sms = () => {
               </div>
               <div className="w-full flex gap-5 ">
                 <input
+                  onChange={(e) => setcode(e.target.value)}
                   className="w-1/2 border-blue-400 border rounded-lg px-2
                   "
                   placeholder="CODE"
                 />
                 <div className="w-1/2 flex gap-3">
+                  {value > 0 ? (
+                    <button
+                      disabled
+                      onClick={() => toast.loading(`wait ${value} sec`)}
+                      className="bg-sky-400 p-2 rounded-xl  disabled:brightness-75"
+                    >
+                      {value} Send Code
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => sendSms({ number: item?.info[0]?.number })}
+                      className="bg-sky-400 p-2 rounded-xl"
+                    >
+                      Send Code
+                    </button>
+                  )}
                   <button
-                    onClick={() => sendSms({ number: item?.info[0]?.number })}
-                    className="bg-sky-400 p-2 rounded-xl"
+                    onClick={() => verify(item._id)}
+                    className="bg-teal-300 p-2 rounded-xl"
                   >
-                    Send Code
+                    Verify
                   </button>
-                  <button className="bg-teal-300 p-2 rounded-xl">Verify</button>
                 </div>
               </div>
             </div>
