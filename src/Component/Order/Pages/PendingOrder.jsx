@@ -84,23 +84,56 @@ const PendingOrder = () => {
             }
           >
             <motion.div
-              className="max-w-lg w-4/5 bg-white border rounded-xl"
+              className="max-w-2xl w-4/5 h-4/6 overflow-y-auto bg-white border rounded-xl "
               initial={{ y: "-100vh" }}
               animate={{ y: 0 }}
               exit={{ y: "-100vh" }}
               transition={{ duration: 0.35 }}
             >
-              <div className="border-b-2 border-black">
-                <h5 className="m-0 text-xl p-4 text-left">Order Details</h5>
+              <div className="border-b-2 border-black ">
+                <div className="flex justify-between px-3 items-center">
+                  <h5 className="m-0 text-xl p-4 ">Order Details</h5>
+                  <button
+                    className="border  border-gray-700 p-1.5 rounded-lg"
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div>
                 <div className="flex justify-end gap-2">
-                  <button className="group">
+                  <button
+                    className="group"
+                    onClick={async () => {
+                      try {
+                        await orderStatus(data?._id, {
+                          status: "cancelled",
+                        });
+                        setIsModalOpen(!isModalOpen);
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
-                      className="w-6 h-6 group-hover:text-red-600"
+                      className="w-10 h-10 group-hover:text-red-600"
                     >
                       <path
                         fillRule="evenodd"
@@ -126,7 +159,7 @@ const PendingOrder = () => {
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
-                      className="w-6 h-6 group-hover:text-teal-500"
+                      className="w-10 h-10 group-hover:text-teal-500"
                     >
                       <path
                         fillRule="evenodd"
@@ -137,7 +170,26 @@ const PendingOrder = () => {
                   </button>
                 </div>
                 <div>
-                  <div className="overflow-x-auto">
+                  <div className="w-auto h-40">
+                    <h2 className="text-xl font-semibold text-center">
+                      Buyer Info!
+                    </h2>
+                    <div className="flex flex-col px-5">
+                      <p>
+                        <span>Name</span>:-<span>{data.info[0]?.fullName}</span>
+                      </p>
+                      <p>
+                        <span>Location</span>:-
+                        <span>{data.info[0]?.upazila}</span> ,
+                        <span>{data.info[0]?.district}</span> ,
+                        <span>{data.info[0]?.division}</span>
+                      </p>
+                      <p>
+                        <span>Number</span>:-<span>{data.info[0]?.number}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="px-5 mt-5">
                     <table className="table w-full">
                       {/* head */}
                       <thead>

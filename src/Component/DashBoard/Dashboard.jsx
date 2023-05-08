@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import { CustomHookContext } from "../../Hooks/useHooks";
 
 const Dashboard = () => {
+  const { newOrder, packagingOrder, shipmentOrder } =
+    useContext(CustomHookContext);
+  const newOrderPrice = newOrder.reduce(
+    (sum, item) => sum + parseFloat(item.amount),
+    0
+  );
+  let packagingOrderPrice = packagingOrder.reduce(
+    (sum, item) => sum + parseFloat(item.amount),
+    0
+  );
+  let shipmentOrderPrice = shipmentOrder.reduce(
+    (sum, item) => sum + parseFloat(item.amount),
+    0
+  );
+
   return (
     <div>
       <div className="flex  md:flex-row flex-col stats stats-vertical lg:stats-horizontal shadow   items-center mx-auto">
@@ -17,8 +33,8 @@ const Dashboard = () => {
             Shipping Order
           </div>
           <div className="flex  justify-between items-center">
-            <div className="stat-value">67</div>
-            <div className="font-semibold text-lg">$5800</div>
+            <div className="stat-value">{shipmentOrder?.length || 0}</div>
+            <div className="font-semibold text-lg">${shipmentOrderPrice}</div>
           </div>
         </div>
         <div className="stat">
@@ -31,11 +47,11 @@ const Dashboard = () => {
             ></lord-icon>
           </div>
           <div className="font-extrabold text-lg underline underline-offset-1">
-            Pending Order
+            Packaging Order
           </div>
           <div className="flex  justify-between items-center">
-            <div className="stat-value">90</div>
-            <div className="font-semibold text-lg">$58800</div>
+            <div className="stat-value">{packagingOrder?.length || 0}</div>
+            <div className="font-semibold text-lg">${packagingOrderPrice}</div>
           </div>
         </div>
         <div className="stat">
@@ -51,12 +67,12 @@ const Dashboard = () => {
             New Order
           </div>
           <div className="flex  justify-between items-center">
-            <div className="stat-value">35</div>
-            <div className="font-semibold text-lg">$5800</div>
+            <div className="stat-value">{newOrder?.length || 0}</div>
+            <div className="font-semibold text-lg">${newOrderPrice}</div>
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row lg:justify-between justify-center items-center">
+      <div className="flex flex-col md:flex-row lg:justify-between justify-center items-center px-5">
         <div>
           <p className="dark:text-slate-50 text-xl font-bold text-center underline ">
             Inbox
@@ -90,7 +106,7 @@ const Dashboard = () => {
           <p className="dark:text-slate-50 text-xl font-bold text-center underline">
             B2B User
           </p>
-          <div className="alert shadow-lg">
+          {/* <div className="alert shadow-lg">
             <div>
               <div className="avatar">
                 <div className="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
@@ -111,7 +127,7 @@ const Dashboard = () => {
             <div className="flex-none">
               <button className="btn btn-sm">See</button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

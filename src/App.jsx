@@ -18,6 +18,8 @@ import InputPagesNavigation from "./Component/InputPages/Navigation/InputPagesNa
 import FirebaseContextProvider from "./Hooks/useFirebase";
 import Signup from "./Component/Account/Signup";
 import Sms from "./Component/Delivery/Sms";
+import Login from "./Component/Account/Login";
+import B2b_Navigation from "./Component/B2b/Navigation/B2b_Navigation";
 
 const App = () => {
   return (
@@ -33,7 +35,9 @@ const App = () => {
             <Route path="/edit" element={<Edit_Pages_Navigation />} />
             <Route path="/offer" element={<Offer_Navigation_Tab />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/b2b" element={<B2b_Navigation />} />
             <Route path="/sms" element={<Sms />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
           <Toaster />
         </ContextProvider>

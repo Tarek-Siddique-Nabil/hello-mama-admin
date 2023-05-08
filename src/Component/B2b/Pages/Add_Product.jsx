@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { CustomHookContext } from "../../../Hooks/useHooks";
+import { AuthContext } from "../../../Hooks/useFirebase";
+import axios from "axios";
 
-const Product_Input = () => {
+const Add_Product = () => {
   const { post, categories } = useContext(CustomHookContext);
+  const { user } = useContext(AuthContext);
   const [existingCategory, setExistingCategory] = useState([]);
 
   const [existingSubCategory, setSubExistingCategory] = useState([]);
@@ -27,7 +29,7 @@ const Product_Input = () => {
           `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/upload`,
           formData
         );
-        setBaseImage(res.data.imageUrl);
+        setBaseImage(res?.data?.imageUrl);
       } catch (error) {
         console.log(error);
       }
@@ -107,7 +109,12 @@ const Product_Input = () => {
       spec: highLightPointList || [],
       productVariant: variableList || [],
       unit: e.target.unit.value,
+      postFrom: user.email,
     };
+    console.log(
+      "🚀 ~ file: Add_Product.jsx:113 ~ onSubmit ~ product:",
+      product
+    );
 
     await post(product);
 
@@ -128,6 +135,7 @@ const Product_Input = () => {
     setHighLightPointList([{ highLightPoint: "" }]);
     setVariableList([{ price: "", variety: "", image: null }]);
   };
+
   return (
     <>
       <form
@@ -414,4 +422,4 @@ const Product_Input = () => {
   );
 };
 
-export default Product_Input;
+export default Add_Product;

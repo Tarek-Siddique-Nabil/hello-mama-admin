@@ -84,23 +84,56 @@ const Shipments = () => {
             }
           >
             <motion.div
-              className="max-w-lg w-4/5 bg-white border rounded-xl"
+              className="max-w-2xl w-4/5 h-4/6 overflow-y-auto bg-white border rounded-xl "
               initial={{ y: "-100vh" }}
               animate={{ y: 0 }}
               exit={{ y: "-100vh" }}
               transition={{ duration: 0.35 }}
             >
-              <div className="border-b-2 border-black">
-                <h5 className="m-0 text-xl p-4 text-left">Order Details</h5>
+              <div className="border-b-2 border-black ">
+                <div className="flex justify-between px-3 items-center">
+                  <h5 className="m-0 text-xl p-4 ">Order Details</h5>
+                  <button
+                    className="border  border-gray-700 p-1.5 rounded-lg"
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div>
                 <div className="flex justify-end gap-2">
-                  <button className="group">
+                  <button
+                    className="group"
+                    onClick={async () => {
+                      try {
+                        await orderStatus(data?._id, {
+                          status: "cancelled",
+                        });
+                        setIsModalOpen(!isModalOpen);
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
-                      className="w-6 h-6 group-hover:text-red-600"
+                      className="w-10 h-10 group-hover:text-red-600"
                     >
                       <path
                         fillRule="evenodd"
@@ -109,30 +142,28 @@ const Shipments = () => {
                       />
                     </svg>
                   </button>
-                  <button
-                    className="group"
-                    onClick={async () =>
-                      await orderStatus(data?._id, {
-                        status: "packaging",
-                      })
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-6 h-6 group-hover:text-teal-500"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
                 </div>
                 <div>
-                  <div className="overflow-x-auto">
+                  <div className="w-auto h-40">
+                    <h2 className="text-xl font-semibold text-center">
+                      Buyer Info!
+                    </h2>
+                    <div className="flex flex-col px-5">
+                      <p>
+                        <span>Name</span>:-<span>{data.info[0]?.fullName}</span>
+                      </p>
+                      <p>
+                        <span>Location</span>:-
+                        <span>{data.info[0]?.upazila}</span> ,
+                        <span>{data.info[0]?.district}</span> ,
+                        <span>{data.info[0]?.division}</span>
+                      </p>
+                      <p>
+                        <span>Number</span>:-<span>{data.info[0]?.number}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="px-5 mt-5">
                     <table className="table w-full">
                       {/* head */}
                       <thead>
@@ -173,9 +204,14 @@ const Shipments = () => {
                     </table>
                   </div>
                 </div>
-                <button onClick={() => setIsModalOpen(!isModalOpen)}>
-                  Close
-                </button>
+                <div className="flex justify-end mr-3">
+                  <button
+                    className="bg-cyan-300 hover:text-gray-900 border  rounded-xl px-2.5 py-2 "
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

@@ -59,11 +59,13 @@ const Sms = () => {
     setValue(60);
   };
   const verify = async (id) => {
-    if (randomNumber === code)
+    if (randomNumber === code) {
       await orderStatus(id, {
         status: "successful",
       });
-    else {
+      setInput(null);
+      setRandomNumber(null);
+    } else {
       toast.error("CODE ERROR", {
         position: "top-center",
         duration: 1500,

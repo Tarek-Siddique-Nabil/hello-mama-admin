@@ -1,30 +1,25 @@
 import React, { useState } from "react";
-import Banner from "../Pages/Banner";
-import Featured_Products from "../Pages/Featured_Products";
-import Cupon_code from "../Pages/Cupon_code";
+import ExistingProduct from "../Pages/ExistingProduct";
+import Add_Product from "../Pages/Add_Product";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Offer_Navigation_Tab = () => {
+const B2b_Navigation = () => {
   const tabs = [
     {
-      icon: "🖼",
-      label: "Banner",
-      scene: <Banner />,
+      icon: "📃",
+      label: "Product",
+      scene: <Add_Product />,
     },
     {
-      icon: "🆕",
-      label: "Featured Products",
-      scene: <Featured_Products />,
-    },
-    {
-      icon: "👩‍💻",
-      label: "Cupon Code",
-      scene: <Cupon_code />,
+      icon: "📝",
+      label: "Existing",
+      scene: <ExistingProduct />,
     },
   ];
   const [selectedTab, setSelectedTab] = useState({
-    label: "Banner",
-    scene: <Banner />,
+    icon: "📃",
+    label: "Product",
+    scene: <Add_Product />,
   });
   return (
     <>
@@ -34,7 +29,7 @@ const Offer_Navigation_Tab = () => {
           position: relative;
           transition: all 0.3s ease-in-out;
         }
-
+  
         .underline-animation::after {
           content: "";
           position: absolute;
@@ -47,7 +42,7 @@ const Offer_Navigation_Tab = () => {
           transform-origin: bottom left;
           transition: transform 0.3s ease-in-out;
         }
-
+  
         .underline-animation:hover::after,
         .underline-animation:focus::after,
         .underline-animation:active::after,
@@ -57,7 +52,7 @@ const Offer_Navigation_Tab = () => {
       `}
       </style>
       <div className="container lg:px-16 py-5 mx-auto border">
-        <p className="text-lg font-semibold text-center mb-3">Offer Pages</p>
+        <p className="text-lg font-semibold text-center mb-3">B2b Pages</p>
         <nav>
           <div className="flex justify-center gap-5">
             {tabs.map((item, index) => (
@@ -102,4 +97,4 @@ const Offer_Navigation_Tab = () => {
   );
 };
 
-export default Offer_Navigation_Tab;
+export default B2b_Navigation;

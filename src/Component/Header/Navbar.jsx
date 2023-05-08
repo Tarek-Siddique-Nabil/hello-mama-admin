@@ -9,11 +9,13 @@ const Navbar = () => {
     "order",
     "edit",
     "offer",
+    "b2b",
     "sms",
   ];
   const [isFloating, setIsFloating] = useState(false);
   const [selection, setSelection] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpand, setIsExpand] = useState(false);
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -118,6 +120,57 @@ const Navbar = () => {
                   </NavLink>
                 </motion.li>
               ))}
+              <div>
+                <div
+                  className="flex hover:cursor-pointer border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                  onClick={() => setIsExpand(!isExpand)}
+                >
+                  <p>Authentication</p>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 transition-all duration-300 delay-75 ease-in-out"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d={
+                        isExpand === true
+                          ? "M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75"
+                          : "M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+                      }
+                    />
+                  </svg>
+                </div>
+                {isExpand === true && (
+                  <div className="flex flex-col gap-2 mt-2 transition-all duration-150 ease-in-out delay-75">
+                    <NavLink
+                      to="/signup"
+                      className={
+                        selection === "signup"
+                          ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                          : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                      }
+                      onClick={() => setSelection("signup")}
+                    >
+                      Create Account
+                    </NavLink>
+                    <NavLink
+                      className={
+                        selection === "user"
+                          ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                          : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                      }
+                      onClick={() => setSelection("user")}
+                    >
+                      Existing Account
+                    </NavLink>
+                  </div>
+                )}
+              </div>
             </motion.ul>
           </motion.div>
           <div className="flex justify-between items-center mx-3">

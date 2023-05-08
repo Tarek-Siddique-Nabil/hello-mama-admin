@@ -8,12 +8,17 @@ const Signup = () => {
   const [role, setRole] = useState("");
   console.log("🚀 ~ file: Signup.jsx:9 ~ Signup ~ role:", role);
   const [fullName, setFullName] = useState("");
-
+  const [nid, setNid] = useState(null);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      await createUser(email, password, role, fullName);
+      await createUser(email, password, role, fullName, nid);
+      setEmail(null);
+      setPassword(null);
+      setRole(null);
+      setFullName(null);
+      setNid(null);
     } catch (error) {
       console.error(error);
     }
@@ -96,8 +101,27 @@ const Signup = () => {
                   ></input>
                 </div>
               </div>
+              <div>
+                <label
+                  htmlFor="Nid"
+                  className="text-base font-medium text-gray-900 dark:text-gray-200"
+                >
+                  {" "}
+                  Nid Number{" "}
+                </label>
+                <div className="mt-2.5">
+                  <input
+                    onChange={(e) => setNid(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent py-2 px-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-50 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-900"
+                    placeholder="Enter Your Nid Number"
+                    id="nid"
+                  ></input>
+                </div>
+              </div>
             </div>
-            <button type="submit">Submit</button>
+            <button className="btn btn-primary btn-md mt-2" type="submit">
+              Submit
+            </button>
           </form>
         </div>
       </div>
