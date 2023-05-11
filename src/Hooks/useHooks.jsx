@@ -44,9 +44,9 @@ export const ContextProvider = ({ children }) => {
 
   // --------------------------------------------------------b2b product get -----------------------------------
   useEffect(() => {
-    const url = `${
-      import.meta.env.VITE_APP_SECRET_SERVER_SIDE
-    }/product/${localStorage.getItem("User email")}`;
+    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/product/${
+      user?.email || localStorage.getItem("User email")
+    }`;
     setLoading(false);
     const fetchData = async () => {
       try {
@@ -113,10 +113,39 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
+  const updateB2b = async (id, body) => {
+    setLoading(true);
+    try {
+      const url = `${
+        import.meta.env.VITE_APP_SECRET_SERVER_SIDE
+      }/product/b2bProducts/${id}`;
+      const response = await axios.put(url, body, {
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+      const json = response.data;
+      setLoading(false);
+      if (json) {
+        toast.success("Product Update Successfully", {
+          position: "top-center",
+        });
+      }
+      const index = b2b_products.findIndex((item) => item._id === id);
+      const newProductsData = [...b2b_products];
+      newProductsData[index] = json;
+      setB2b_products(newProductsData);
+    } catch (err) {
+      toast.error(err.message, {
+        position: "top-center",
+      });
+    }
+  };
 
   //---------------------------------------------------- product Delete----------------------------------------------------------
 
   const deleteProduct = async (id) => {
+    console.log("🚀 ~ file: useHooks.jsx:120 ~ deleteProduct ~ id:", id);
     try {
       const url = `${
         import.meta.env.VITE_APP_SECRET_SERVER_SIDE
@@ -129,7 +158,8 @@ export const ContextProvider = ({ children }) => {
           position: "top-center",
         });
         // Remove the deleted item from the existing data
-        setProducts((data) => data.filter((item) => item._id !== id));
+        setProducts((data) => data.filter((item) => item._id !== id)) ||
+          setB2b_products((data) => data.filter((item) => item._id !== id));
       } else {
         toast.error("Something error ", {
           position: "top-center",
@@ -451,6 +481,7 @@ export const ContextProvider = ({ children }) => {
         loading,
         post,
         update,
+        updateB2b,
         deleteProduct,
         postCategory,
         deleteCategory,

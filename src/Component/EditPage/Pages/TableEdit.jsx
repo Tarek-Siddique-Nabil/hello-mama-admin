@@ -1,8 +1,36 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { CustomHookContext } from "../../../Hooks/useHooks";
 
 const TableEdit = () => {
   const { products } = useContext(CustomHookContext);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const [changeItems, setChangeItems] = useState([]);
+
+  const handleChange = (itemId, e) => {
+    const index = changeItems.findIndex((item) => item.id === itemId);
+
+    if (index !== -1) {
+      const updatedItem = { ...changeItems[index] };
+      updatedItem[e.target.name] = e.target.value;
+
+      setChangeItems([
+        ...changeItems.slice(0, index),
+        updatedItem,
+        ...changeItems.slice(index + 1),
+      ]);
+    } else {
+      setChangeItems([
+        ...changeItems,
+        {
+          id: itemId,
+          price: e.target.name === "price" ? e.target.value : "",
+          priceB2B: e.target.name === "priceb2b" ? e.target.value : "",
+        },
+      ]);
+    }
+  };
+
   return (
     <>
       <div className="overflow-x-auto w-full ">
@@ -21,7 +49,15 @@ const TableEdit = () => {
               <tr key={index}>
                 <th className="items-center p-4 whitespace-nowrap">
                   <label>
-                    <input type="checkbox" className="checkbox" />
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      onClick={() =>
+                        setSelectedItems(
+                          changeItems.filter((i) => i._id === item._id)
+                        )
+                      }
+                    />
                   </label>
                 </th>
                 <td>
@@ -36,7 +72,7 @@ const TableEdit = () => {
                     </div>
                     <div>
                       <div className="font-bold">{item.title.slice(0, 15)}</div>
-                      <div className="text-sm opacity-50">United States</div>
+                      {/* <div className="text-sm opacity-50">United States</div> */}
                     </div>
                   </div>
                 </td>
@@ -54,7 +90,13 @@ const TableEdit = () => {
                     className="p-1 border border-cyan-700 rounded-xl"
                     inputMode="decimal"
                     type="number"
-                    placeholder={item?.price}
+                    name="price"
+                    placeholder={
+                      changeItems.find(
+                        (selectedItem) => selectedItem.id === item._id
+                      )?.price || item.price
+                    }
+                    onChange={(e) => handleChange(item._id, e)}
                   />
                 </td>
                 <td>
@@ -63,7 +105,13 @@ const TableEdit = () => {
                     className="p-1 border border-cyan-700 rounded-xl"
                     inputMode="decimal"
                     type="number"
-                    placeholder={item?.priceb2b}
+                    name="priceb2b"
+                    placeholder={
+                      changeItems.find(
+                        (selectedItem) => selectedItem.id === item._id
+                      )?.priceb2b || item?.priceb2b
+                    }
+                    onChange={(e) => handleChange((item._id, e))}
                   />
                 </td>
               </tr>
