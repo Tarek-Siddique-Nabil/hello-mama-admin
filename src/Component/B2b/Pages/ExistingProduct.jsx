@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 const ExistingProduct = () => {
-  const { b2b_products, b2bPost } = useContext(CustomHookContext);
+  const { b2b_products, b2bPost, updateB2b } = useContext(CustomHookContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemImage, setSelectedItemImage] = useState(null);
   const [isModalOpenView, setIsModalOpenView] = useState(false);
@@ -44,7 +44,9 @@ const ExistingProduct = () => {
       postFrom: selectedItem?.postFrom,
       image: base_image || selectedItem?.image,
     };
+
     await b2bPost({ ...data, previous: selectedItem, type: "update" });
+    await updateB2b(selectedItem?._id, data);
     // await updateB2b(selectedItem?._id, data);
     setIsModalOpenView(!isModalOpenView);
     e.target.reset();

@@ -172,7 +172,7 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
-  //-------------------------------------------------------B2b-------------------------------------------
+  //-------------------------------------------------------B2b notification get-------------------------------------------
   useEffect(() => {
     const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/b2b`;
     setLoading(false);
@@ -188,7 +188,7 @@ export const ContextProvider = ({ children }) => {
 
     fetchData();
   }, []);
-  // --------------------------------------------------------b2b product add-------------------------
+  // --------------------------------------------------------b2b  Notification post-------------------------
 
   const b2bPost = async (body) => {
     setLoading(true);
@@ -202,19 +202,21 @@ export const ContextProvider = ({ children }) => {
       const json = response?.data;
       setLoading(false);
       if (json) {
+        console.log("🚀 ~ file: useHooks.jsx:205 ~ b2bPost ~ json:", json);
         toast.success("Product Request Send Successfully", {
           position: "top-center",
         });
       }
-      setB2b([...b2bData, json]);
+      setB2bData([...b2bData, json]);
     } catch (err) {
+      console.log("🚀 ~ file: useHooks.jsx:211 ~ b2bPost ~ err:", err);
       toast.error(`Something error`, {
         position: "top-center",
       });
     }
   };
 
-  // -------------------------------------------------------------b2b delete request ----
+  // -------------------------------------------------------------b2b notification delete  ----
   const b2bRequestRemove = async (id) => {
     try {
       const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/b2b/${id}`;

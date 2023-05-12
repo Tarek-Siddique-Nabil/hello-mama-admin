@@ -7,6 +7,8 @@ const Dashboard = () => {
   const {
     post,
     b2bData,
+    update,
+    deleteProduct,
     newOrder,
     packagingOrder,
     shipmentOrder,
@@ -27,10 +29,6 @@ const Dashboard = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  console.log(
-    "🚀 ~ file: Dashboard.jsx:23 ~ Dashboard ~ selectedItem:",
-    selectedItem
-  );
 
   const handleBaseImage = async (e) => {
     e.preventDefault();
@@ -49,10 +47,16 @@ const Dashboard = () => {
       }
     }
   };
-  const hnadleSubmit = async () => {
-    await post(selectedItem);
-    await b2bRequestRemove(selectedItem?._id);
-    setIsModalOpen(!isModalOpen);
+  const handleSubmit = async (type) => {
+    if (type === "delete") {
+      await deleteProduct(selectedItem?._id);
+      await b2bRequestRemove(selectedItem?._id);
+      setIsModalOpen(!isModalOpen);
+    } else if (type === "add") {
+      await post(selectedItem);
+      await b2bRequestRemove(selectedItem?._id);
+      setIsModalOpen(!isModalOpen);
+    }
   };
   return (
     <>
@@ -172,8 +176,14 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="ml-3">
+                      <div>
+                        <span className="font-bold text-xl capitalize text-gray-200">
+                          {item?.type}
+                        </span>
+                      </div>
+
                       <div className="text-md ">
-                        <span className="font-bold">Number:</span>{" "}
+                        <span className="font-bold">Email:</span>{" "}
                         {item.postFrom}
                       </div>
                     </div>
@@ -207,7 +217,7 @@ const Dashboard = () => {
           >
             {selectedItem.type === "update" ? (
               <motion.div
-                className="max-w-lg w-1/3  h-1/2  bg-gray-800 border rounded-xl "
+                className="w-[720px]  h-[450px] flex flex-col  px-5 py-2  bg-gray-800 border rounded-xl "
                 initial={{ scale: 0 }}
                 animate={{ rotate: 360, scale: 1 }}
                 exit={{ scale: 0 }}
@@ -218,6 +228,150 @@ const Dashboard = () => {
                   duration: 0.3,
                 }}
               >
+                <div className="flex justify-end mb-5">
+                  <button
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                    className="bg-cyan-400 shadow-lg shadow-gray-50 rounded-lg px-2 py-1 text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <section className="flex flex-wrap justify-between items-center">
+                  <motion.div className="text-white">
+                    <p
+                      className="text-center bg-red-400 text-xl
+                   rounded-xl py-2
+                    mb-3
+                    "
+                    >
+                      Previous
+                    </p>
+                    <img
+                      className="w-28 h-28 border border-slate-50 rounded-xl "
+                      src={selectedItem?.previous.image}
+                    />
+                    <p>
+                      <span className="text-xl font-semibold">Title:-</span>
+                      <span>{selectedItem?.previous.title}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">Price:-</span>
+                      <span>{selectedItem?.previous.price}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">PriceB2B:-</span>
+                      <span>{selectedItem?.previous.priceb2b}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">
+                        Description:-
+                      </span>
+                      <span>{selectedItem?.previous.description}</span>
+                    </p>
+                  </motion.div>
+                  <motion.div className="text-white">
+                    <p
+                      className="text-center bg-blue-400 text-xl
+                   rounded-xl py-2
+                    mb-3
+                    "
+                    >
+                      Update
+                    </p>
+                    <img
+                      className="w-28 h-28 border border-slate-50 rounded-xl "
+                      src={selectedItem.image}
+                    />
+                    <p>
+                      <span className="text-xl font-semibold">Title:-</span>
+                      <span>{selectedItem?.title}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">Price:-</span>
+                      <span>{selectedItem?.price}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">PriceB2B:-</span>
+                      <span>{selectedItem?.priceb2b}</span>
+                    </p>
+                    <p>
+                      <span className="text-xl font-semibold">
+                        Description:-
+                      </span>
+                      <span>{selectedItem?.description}</span>
+                    </p>
+                  </motion.div>
+                </section>
+                <motion.div className="flex flex-col justify-center items-center ">
+                  <p className="text-xl text-white ">
+                    Are you want to update this ?
+                  </p>
+                  <motion.div className="flex  justify-center gap-x-3">
+                    <motion.button
+                      initial={{ x: "100vh" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "100vh" }}
+                      transition={{ duration: 0.35, delay: 0.3 }}
+                      onClick={() => {
+                        b2bRequestRemove(selectedItem._id),
+                          setIsModalOpen(!isModalOpen),
+                          setSelectedItem(null);
+                      }}
+                      className="text-slate-50 text-xl bg-red-400 px-2.5 py-1 rounded-xl shadow-lg shadow-gray-500"
+                    >
+                      Ok
+                    </motion.button>
+                  </motion.div>
+                  <motion.div className="flex gap-4 mt-1.5"></motion.div>
+                </motion.div>
+              </motion.div>
+            ) : (
+              <motion.div
+                className="max-w-lg w-1/3  h-[60%]  bg-gray-800 border rounded-xl "
+                initial={{ scale: 0 }}
+                animate={{ rotate: 360, scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  duration: 0.3,
+                }}
+              >
+                <div className="flex justify-end ">
+                  <button
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                    className="bg-cyan-400 shadow-lg shadow-gray-50 rounded-lg px-2 py-1 text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
                 <section className="flex  h-3/4 border border-white px-2 py-1 justify-between gap-x-5  items-center">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -310,7 +464,7 @@ const Dashboard = () => {
                 </section>
                 <motion.div className="flex flex-col justify-center items-center ">
                   <p className="text-xl text-white ">
-                    Are you want to add this in store ?
+                    Are you want to {selectedItem?.type} this ?
                   </p>
                   <motion.div className="flex  justify-center gap-x-3">
                     <motion.button
@@ -319,8 +473,8 @@ const Dashboard = () => {
                       exit={{ x: "-100vh" }}
                       transition={{ duration: 0.35, delay: 0.3 }}
                       className="text-slate-50 text-xl bg-teal-400 px-2.5 py-1 rounded-xl shadow-lg shadow-gray-500
-                  "
-                      onClick={hnadleSubmit}
+                "
+                      onClick={() => handleSubmit(selectedItem?.type)}
                     >
                       Yes
                     </motion.button>
@@ -330,7 +484,9 @@ const Dashboard = () => {
                       exit={{ x: "100vh" }}
                       transition={{ duration: 0.35, delay: 0.3 }}
                       onClick={() => {
-                        setIsModalOpen(!isModalOpen), setSelectedItem(null);
+                        b2bRequestRemove(selectedItem._id),
+                          setIsModalOpen(!isModalOpen),
+                          setSelectedItem(null);
                       }}
                       className="text-slate-50 text-xl bg-red-400 px-2.5 py-1 rounded-xl shadow-lg shadow-gray-500"
                     >
@@ -338,26 +494,6 @@ const Dashboard = () => {
                     </motion.button>
                   </motion.div>
                   <motion.div className="flex gap-4 mt-1.5"></motion.div>
-                </motion.div>
-              </motion.div>
-            ) : (
-              <motion.div
-                className="max-w-lg w-1/3  h-1/2  bg-gray-800 border rounded-xl "
-                initial={{ scale: 0 }}
-                animate={{ rotate: 360, scale: 1 }}
-                exit={{ scale: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                  duration: 0.3,
-                }}
-              >
-                <motion.div>
-                  <p>Previous</p>
-                  <div>
-                    <p></p>
-                  </div>
                 </motion.div>
               </motion.div>
             )}
