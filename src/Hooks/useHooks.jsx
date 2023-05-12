@@ -9,6 +9,7 @@ export const CustomHookContext = createContext();
 export const ContextProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
+  const [b2bData, setB2bData] = useState([]);
   const [b2b_products, setB2b_products] = useState([]);
   const [categories, setCategories] = useState([]);
   const [allOrders, setAllOrders] = useState([]);
@@ -171,7 +172,72 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
+  //-------------------------------------------------------B2b-------------------------------------------
+  useEffect(() => {
+    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/b2b`;
+    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+        setB2bData(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
+    fetchData();
+  }, []);
+  // --------------------------------------------------------b2b product add-------------------------
+
+  const b2bPost = async (body) => {
+    setLoading(true);
+    try {
+      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/b2b`;
+      const response = await axios.post(url, body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = response?.data;
+      setLoading(false);
+      if (json) {
+        toast.success("Product Request Send Successfully", {
+          position: "top-center",
+        });
+      }
+      setB2b([...b2bData, json]);
+    } catch (err) {
+      toast.error(`Something error`, {
+        position: "top-center",
+      });
+    }
+  };
+
+  // -------------------------------------------------------------b2b delete request ----
+  const b2bRequestRemove = async (id) => {
+    try {
+      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/b2b/${id}`;
+      const response = await axios.delete(url);
+      const data = response.data;
+
+      if (data) {
+        toast.success("Request delete", {
+          position: "top-center",
+        });
+        // Remove the deleted item from the existing data
+        setB2bData((data) => data.filter((item) => item._id !== id));
+      } else {
+        toast.error("Something error ", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      toast.error("Something error ", {
+        position: "top-center",
+      });
+    }
+  };
   ///-------------------------------------------Category--------------------------------//
 
   // ----------------------------------------------------------Category get----------------------------------------------------------
@@ -482,6 +548,8 @@ export const ContextProvider = ({ children }) => {
         post,
         update,
         updateB2b,
+        b2bData,
+        b2bPost,
         deleteProduct,
         postCategory,
         deleteCategory,
@@ -498,6 +566,7 @@ export const ContextProvider = ({ children }) => {
         cuponCode,
         createCupon,
         deleteCupon,
+        b2bRequestRemove,
       }}
     >
       {children}

@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 const ExistingProduct = () => {
-  const { b2b_products, deleteProduct, updateB2b } =
-    useContext(CustomHookContext);
+  const { b2b_products, b2bPost } = useContext(CustomHookContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemImage, setSelectedItemImage] = useState(null);
   const [isModalOpenView, setIsModalOpenView] = useState(false);
@@ -45,7 +44,8 @@ const ExistingProduct = () => {
       postFrom: selectedItem?.postFrom,
       image: base_image || selectedItem?.image,
     };
-    await updateB2b(selectedItem?._id, data);
+    await b2bPost({ ...data, previous: selectedItem, type: "update" });
+    // await updateB2b(selectedItem?._id, data);
     setIsModalOpenView(!isModalOpenView);
     e.target.reset();
   };
@@ -442,7 +442,7 @@ const ExistingProduct = () => {
                 <motion.div className="flex gap-4 mt-1.5">
                   <button
                     onClick={async () => {
-                      await deleteProduct(selectedItem._id),
+                      await b2bPost({ ...selectedItem, type: "delete" }),
                         setIsModalOpenDelete(!isModalOpenDelete);
                     }}
                     className="text-white border px-2.5 py-1.5 bg-red-500 rounded-lg"
