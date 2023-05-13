@@ -26,7 +26,6 @@ import RequireAuth from "./Hooks/RequireAuth";
 
 const App = () => {
   const userRole = localStorage.getItem("User role");
-  console.log("🚀 ~ file: App.jsx:28 ~ App ~ userRole:", userRole);
 
   return (
     <Router>

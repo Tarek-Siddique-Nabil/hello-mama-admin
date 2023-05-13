@@ -6,7 +6,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
-  console.log("🚀 ~ file: Signup.jsx:9 ~ Signup ~ role:", role);
+
   const [fullName, setFullName] = useState("");
   const [nid, setNid] = useState(null);
   const handleSubmit = async (event) => {
@@ -19,6 +19,7 @@ const Signup = () => {
       setRole(null);
       setFullName(null);
       setNid(null);
+      event.target.reset();
     } catch (error) {
       console.error(error);
     }

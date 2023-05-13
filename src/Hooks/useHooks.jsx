@@ -18,6 +18,7 @@ export const ContextProvider = ({ children }) => {
   const [shipmentOrder, setshipmentOrder] = useState([]);
   const [cancelledOrder, setCancelledOrder] = useState(null);
   const [successfulOrder, setSuccessfulOrder] = useState(null);
+
   const [bannerData, setBannerData] = useState(null);
   const [cuponCode, setCuponCode] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -146,7 +147,6 @@ export const ContextProvider = ({ children }) => {
   //---------------------------------------------------- product Delete----------------------------------------------------------
 
   const deleteProduct = async (id) => {
-    console.log("🚀 ~ file: useHooks.jsx:120 ~ deleteProduct ~ id:", id);
     try {
       const url = `${
         import.meta.env.VITE_APP_SECRET_SERVER_SIDE
@@ -202,14 +202,12 @@ export const ContextProvider = ({ children }) => {
       const json = response?.data;
       setLoading(false);
       if (json) {
-        console.log("🚀 ~ file: useHooks.jsx:205 ~ b2bPost ~ json:", json);
         toast.success("Product Request Send Successfully", {
           position: "top-center",
         });
       }
       setB2bData([...b2bData, json]);
     } catch (err) {
-      console.log("🚀 ~ file: useHooks.jsx:211 ~ b2bPost ~ err:", err);
       toast.error(`Something error`, {
         position: "top-center",
       });
@@ -370,10 +368,6 @@ export const ContextProvider = ({ children }) => {
 
   //  ----------------------------------------Order Status Change ----------------------------//
   const orderStatus = async (id, body) => {
-    console.log(
-      "🚀 ~ file: useHooks.jsx:241 ~ orderStatus ~ body:",
-      body.status
-    );
     try {
       const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/order/${id}`;
       const response = await axios.put(url, body, {

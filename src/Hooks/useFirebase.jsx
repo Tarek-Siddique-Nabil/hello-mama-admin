@@ -30,6 +30,7 @@ const FirebaseContextProvider = ({ children }) => {
       role: role,
       nid: nid,
     };
+
     try {
       const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/role`;
       const response = await axios.post(url, userRole, {
@@ -45,7 +46,6 @@ const FirebaseContextProvider = ({ children }) => {
         });
         return createUserWithEmailAndPassword(auth, email, password);
       }
-      console.log(json);
     } catch (err) {
       toast.error(`${err?.message}`, {
         position: "top-center",

@@ -62,7 +62,7 @@ const Product_Input = () => {
   const variableChange = async (e, index) => {
     e.preventDefault();
     const { name, value, files } = e.target;
-    console.log("🚀 ~ file: InputPage.jsx:48 ~ variableChange ~ files:", files);
+
     const list = [...variableList];
     if (name === "image" && files.length > 0) {
       const formData = new FormData();

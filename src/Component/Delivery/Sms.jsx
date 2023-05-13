@@ -34,6 +34,7 @@ const Sms = () => {
     const randomNum = Math.floor(Math.random() * 100000)
       .toString()
       .padStart(5, "0");
+
     setRandomNumber(randomNum);
     const postSMS = async () => {
       try {
@@ -51,9 +52,7 @@ const Sms = () => {
             duration: 1000,
           });
         }
-      } catch (err) {
-        console.log();
-      }
+      } catch (err) {}
     };
     postSMS(); // Call the postSMS function to send the SMS
     setValue(60);

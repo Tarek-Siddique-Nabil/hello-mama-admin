@@ -13,7 +13,9 @@ const Navbar = () => {
     navigationPath = ["b2b"];
   } else if (userRole === `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}`) {
     navigationPath = ["dashboard", "input", "order", "edit", "offer"];
-  } else if (userRole === `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}`) {
+  } else if (
+    userRole === `${import.meta.env.VITE_APP_SECRET_CODE_DELIVERY_BOY}`
+  ) {
     navigationPath = ["sms"];
   }
 
@@ -130,7 +132,7 @@ const Navbar = () => {
                   </motion.li>
                 ))}
 
-                {(userRole === userRole) ===
+                {userRole ===
                   `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}` && (
                   <div>
                     <div

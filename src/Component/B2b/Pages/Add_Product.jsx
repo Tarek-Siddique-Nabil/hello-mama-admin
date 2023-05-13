@@ -52,10 +52,6 @@ const Add_Product = () => {
       postFrom: user?.email,
       type: "add",
     };
-    console.log(
-      "🚀 ~ file: Add_Product.jsx:113 ~ onSubmit ~ product:",
-      product
-    );
 
     await b2bPost(product);
 

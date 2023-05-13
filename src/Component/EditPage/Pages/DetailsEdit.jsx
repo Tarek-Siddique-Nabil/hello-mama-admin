@@ -99,7 +99,7 @@ const DetailsEdit = () => {
       description: description || selectedItem?.description,
       spec: highLightPointList,
     };
-    console.log(data);
+
     // await update(selectedItem?._id, data);
     // setSelectedItem(null);
     // setTitle(null);
