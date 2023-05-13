@@ -19,11 +19,7 @@ const auth = getAuth(app);
 const FirebaseContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  console.log(
-    "🚀 ~ file: useFirebase.jsx:22 ~ FirebaseContextProvider ~ userRole:",
-    userRole
-  );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const googleProvider = new GoogleAuthProvider();
 
@@ -62,17 +58,37 @@ const FirebaseContextProvider = ({ children }) => {
       const url = `${
         import.meta.env.VITE_APP_SECRET_SERVER_SIDE
       }/role/${email}`;
-      setLoading(false);
+      setLoading(true);
       const response = await axios.get(url);
       const json = response.data;
       if (json) {
-        console.log("🚀 ~ file: useFirebase.jsx:66 ~ fetchData ~ json:", json);
         toast.success("Login Successfully", {
           duration: 1500,
           position: "top-center",
         });
         localStorage.setItem("User email", json.email);
-        localStorage.setItem("User role", json.role);
+        if (json?.role === "Secondary Admin") {
+          localStorage.setItem(
+            "User role",
+            `${import.meta.env.VITE_APP_SECRET_CODE_SECONDARY_ADMIN}`
+          );
+        } else if (json?.role === "B2b") {
+          localStorage.setItem(
+            "User role",
+            `${import.meta.env.VITE_APP_SECRET_CODE_B2B}`
+          );
+        } else if (json?.role === "Delivery Boy") {
+          localStorage.setItem(
+            "User role",
+            `${import.meta.env.VITE_APP_SECRET_CODE_DELIVERY_BOY}`
+          );
+        } else if (json?.role === "Admin") {
+          localStorage.setItem(
+            "User role",
+            `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}`
+          );
+        }
+
         signInWithEmailAndPassword(auth, email, password);
         setUserRole({ email: json.email, role: json.role });
       } else {

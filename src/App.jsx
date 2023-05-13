@@ -19,24 +19,100 @@ import FirebaseContextProvider from "./Hooks/useFirebase";
 import Signup from "./Component/Account/Signup";
 import Sms from "./Component/Delivery/Sms";
 import Login from "./Component/Account/Login";
+
+import Unauthorized from "./Component/Error/Unauthorized";
 import B2b_Navigation from "./Component/B2b/Navigation/B2b_Navigation";
+import RequireAuth from "./Hooks/RequireAuth";
 
 const App = () => {
+  const userRole = localStorage.getItem("User role");
+  console.log("🚀 ~ file: App.jsx:28 ~ App ~ userRole:", userRole);
+
   return (
     <Router>
       <FirebaseContextProvider>
         <ContextProvider>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Navigate to="/" replace />} />
-            <Route path="/order" element={<Order_Pages_Nabigation />} />
-            <Route path="/input" element={<InputPagesNavigation />} />
-            <Route path="/edit" element={<Edit_Pages_Navigation />} />
-            <Route path="/offer" element={<Offer_Navigation_Tab />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/b2b" element={<B2b_Navigation />} />
-            <Route path="/sms" element={<Sms />} />
+            {userRole === import.meta.env.VITE_APP_SECRET_CODE_B2B && (
+              <Route
+                path="/b2b"
+                element={
+                  <RequireAuth>
+                    <B2b_Navigation />
+                  </RequireAuth>
+                }
+              />
+            )}
+            {userRole === import.meta.env.VITE_APP_SECRET_CODE_DELIVERY_BOY && (
+              <Route
+                path="/sms"
+                element={
+                  <RequireAuth>
+                    <Sms />
+                  </RequireAuth>
+                }
+              />
+            )}
+            {userRole === import.meta.env.VITE_APP_SECRET_CODE_ADMIN && (
+              <>
+                <Route
+                  path="/"
+                  element={
+                    <RequireAuth>
+                      <Dashboard />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={<Navigate to="/" replace />}
+                />
+                <Route
+                  path="/order"
+                  element={
+                    <RequireAuth>
+                      <Order_Pages_Nabigation />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/input"
+                  element={
+                    <RequireAuth>
+                      <InputPagesNavigation />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/edit"
+                  element={
+                    <RequireAuth>
+                      <Edit_Pages_Navigation />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/offer"
+                  element={
+                    <RequireAuth>
+                      <Offer_Navigation_Tab />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/signup"
+                  element={
+                    <RequireAuth>
+                      <Signup />
+                    </RequireAuth>
+                  }
+                />
+              </>
+            )}
+
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
             <Route path="/login" element={<Login />} />
           </Routes>
           <Toaster />
