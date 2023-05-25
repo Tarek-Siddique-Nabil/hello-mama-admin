@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Hooks/useFirebase";
+import { Navigate } from "react-router-dom";
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  let userRole = localStorage.getItem("User role");
+  console.log("🚀 ~ file: Login.jsx:11 ~ Login ~ userRole:", userRole);
 
   const handleSignIn = async (event) => {
     event.preventDefault();
@@ -15,6 +18,7 @@ const Login = () => {
       console.log(err);
     }
   };
+
   return (
     <>
       <form

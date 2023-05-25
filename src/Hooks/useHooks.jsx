@@ -22,7 +22,8 @@ export const ContextProvider = ({ children }) => {
   const [bannerData, setBannerData] = useState(null);
   const [cuponCode, setCuponCode] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [unit, setUnit] = useState([]);
+  console.log("🚀 ~ file: useHooks.jsx:26 ~ ContextProvider ~ unit:", unit);
   // const socket = io(`${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/mew-order`);
   ///product
 
@@ -534,6 +535,68 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
+
+  //---------------------------------UNIT---------------------/////////////////
+
+  ///Create //
+  const createUnit = async (body) => {
+    setLoading(true);
+    try {
+      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/unit`;
+      const response = await axios.post(url, body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = response.data;
+      setLoading(false);
+      if (json) {
+        toast.success("New unit added Successfully", {
+          position: "top-center",
+        });
+      }
+      setUnit([...unit, json]);
+    } catch (err) {
+      toast.error(`Something error`, {
+        position: "top-center",
+      });
+    }
+  };
+  //--------------------//get
+
+  useEffect(() => {
+    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/unit`;
+    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+        setUnit(response?.data);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  //------------------------------delete----------------------/////
+  const deleteUnit = async (id) => {
+    const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/unit/${id}`;
+    try {
+      const response = await axios.delete(url);
+      if (response.data) {
+        toast.success("Unit deleted", {
+          position: "top-center",
+        });
+      }
+      setUnit((data) => data.filter((item) => item._id !== id));
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    }
+  };
   return (
     <CustomHookContext.Provider
       value={{
@@ -563,6 +626,9 @@ export const ContextProvider = ({ children }) => {
         createCupon,
         deleteCupon,
         b2bRequestRemove,
+        unit,
+        createUnit,
+        deleteUnit,
       }}
     >
       {children}

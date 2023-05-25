@@ -8,16 +8,7 @@ const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const userRole = localStorage.getItem("User role");
   const storeUser = localStorage.getItem("User email");
-  let navigationPath = [];
-  if (userRole === `${import.meta.env.VITE_APP_SECRET_CODE_B2B}`) {
-    navigationPath = ["b2b"];
-  } else if (userRole === `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}`) {
-    navigationPath = ["dashboard", "input", "order", "edit", "offer"];
-  } else if (
-    userRole === `${import.meta.env.VITE_APP_SECRET_CODE_DELIVERY_BOY}`
-  ) {
-    navigationPath = ["sms"];
-  }
+  const navigationPath = ["dashboard", "input", "order", "edit", "offer"];
 
   const [isFloating, setIsFloating] = useState(false);
   const [selection, setSelection] = useState(null);

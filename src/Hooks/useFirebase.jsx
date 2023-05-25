@@ -1,12 +1,12 @@
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  updateProfile,
   signOut,
 } from "firebase/auth";
+
 import React, { createContext, useEffect, useState } from "react";
 import app from "../Firebase/firebase.config";
 import { toast } from "react-hot-toast";
@@ -18,10 +18,12 @@ const auth = getAuth(app);
 
 const FirebaseContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  console.log(
+    "🚀 ~ file: useFirebase.jsx:21 ~ FirebaseContextProvider ~ user:",
+    user
+  );
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const googleProvider = new GoogleAuthProvider();
 
   const createUser = async (email, password, role, fullName, nid) => {
     const userRole = {
@@ -104,10 +106,6 @@ const FirebaseContextProvider = ({ children }) => {
     }
   };
 
-  const signInWithGoogle = () => {
-    return signInWithPopup(auth, googleProvider);
-  };
-
   const logOut = () => {
     return signOut(auth);
   };
@@ -115,6 +113,10 @@ const FirebaseContextProvider = ({ children }) => {
   // why are we doing this?
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log(
+        "🚀 ~ file: useFirebase.jsx:116 ~ unsubscribe ~ currentUser:",
+        currentUser
+      );
       setUser(currentUser);
       setLoading(false);
     });
@@ -125,9 +127,7 @@ const FirebaseContextProvider = ({ children }) => {
   }, [user]);
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, createUser, signIn, logOut, signInWithGoogle }}
-    >
+    <AuthContext.Provider value={{ user, loading, createUser, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
