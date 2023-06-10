@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
-  const userRole = localStorage.getItem("User role");
+
   const storeUser = localStorage.getItem("User email");
   const navigationPath = ["dashboard", "input", "order", "edit", "offer"];
 
@@ -123,60 +123,57 @@ const Navbar = () => {
                   </motion.li>
                 ))}
 
-                {userRole ===
-                  `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}` && (
-                  <div>
-                    <div
-                      className="flex hover:cursor-pointer border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
-                      onClick={() => setIsExpand(!isExpand)}
+                <div>
+                  <div
+                    className="flex hover:cursor-pointer border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                    onClick={() => setIsExpand(!isExpand)}
+                  >
+                    <p>Authentication</p>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 transition-all duration-300 delay-75 ease-in-out"
                     >
-                      <p>Authentication</p>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6 transition-all duration-300 delay-75 ease-in-out"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d={
-                            isExpand === true
-                              ? "M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75"
-                              : "M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
-                          }
-                        />
-                      </svg>
-                    </div>
-                    {isExpand === true && (
-                      <div className="flex flex-col gap-2 mt-2 transition-all duration-150 ease-in-out delay-75">
-                        <NavLink
-                          to="/signup"
-                          className={
-                            selection === "signup"
-                              ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
-                              : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
-                          }
-                          onClick={() => setSelection("signup")}
-                        >
-                          Create Account
-                        </NavLink>
-                        <NavLink
-                          className={
-                            selection === "user"
-                              ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
-                              : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
-                          }
-                          onClick={() => setSelection("user")}
-                        >
-                          Existing Account
-                        </NavLink>
-                      </div>
-                    )}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d={
+                          isExpand === true
+                            ? "M12 4.5v15m0 0l6.75-6.75M12 19.5l-6.75-6.75"
+                            : "M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+                        }
+                      />
+                    </svg>
                   </div>
-                )}
+                  {isExpand === true && (
+                    <div className="flex flex-col gap-2 mt-2 transition-all duration-150 ease-in-out delay-75">
+                      <NavLink
+                        to="/signup"
+                        className={
+                          selection === "signup"
+                            ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                            : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                        }
+                        onClick={() => setSelection("signup")}
+                      >
+                        Create Account
+                      </NavLink>
+                      <NavLink
+                        className={
+                          selection === "user"
+                            ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                            : "border border-black px-3 py-1.5 rounded-xl bg-gray-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"
+                        }
+                        onClick={() => setSelection("user")}
+                      >
+                        Existing Account
+                      </NavLink>
+                    </div>
+                  )}
+                </div>
               </motion.ul>
             </motion.div>
             <div className="flex justify-between items-center mx-3">
@@ -264,8 +261,8 @@ const Navbar = () => {
                         className="border bg-red-500 border-red-500 shadow-md hover:shadow-lg transition-all duration-150 ease-in-out shadow-slate-50"
                         onClick={() => {
                           logOut(), toast.success("Log Out Successful");
-                          localStorage.removeItem("User role"),
-                            localStorage.removeItem("User email");
+
+                          localStorage.removeItem("User email");
                         }}
                       >
                         Log Out

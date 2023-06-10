@@ -1,124 +1,158 @@
 import React, { useContext, useState } from "react";
 import { CustomHookContext } from "../../../Hooks/useHooks";
+import { toast } from "react-hot-toast";
 
 const TableEdit = () => {
-  const { products } = useContext(CustomHookContext);
+  const { products, updateMultiple } = useContext(CustomHookContext);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const [changeItems, setChangeItems] = useState([]);
+  console.log(
+    "🚀 ~ file: TableEdit.jsx:7 ~ TableEdit ~ selectedItems:",
+    selectedItems
+  );
 
-  const handleChange = (itemId, e) => {
-    const index = changeItems.findIndex((item) => item.id === itemId);
+  const [changedItems, setChangedItems] = useState([]);
+  console.log(
+    "🚀 ~ file: TableEdit.jsx:15 ~ TableEdit ~ changedItems:",
+    changedItems
+  );
 
-    if (index !== -1) {
-      const updatedItem = { ...changeItems[index] };
-      updatedItem[e.target.name] = e.target.value;
+  const handleUpdate = async () => {
+    await updateMultiple(selectedItems);
+  };
 
-      setChangeItems([
-        ...changeItems.slice(0, index),
-        updatedItem,
-        ...changeItems.slice(index + 1),
-      ]);
+  const handleSubmit = (e, i, index) => {
+    e.preventDefault();
+
+    const formData = {
+      _id: i?._id,
+      title: i?.title,
+      price: e.target.price.value || i?.price,
+      priceb2b: e.target.priceb2b.value || i?.priceb2b,
+      category: i?.category,
+      subCategory: i?.subCategory,
+      shipping: i?.shipping,
+      description: i?.description,
+      image: i?.image,
+      spec: i?.spec,
+      productVariant: i?.productVariant,
+      unit: i?.unit,
+      postFrom: i?.postFrom,
+    };
+
+    if (selectedItems.includes(index)) {
+      setSelectedItems(selectedItems.filter((item) => item !== index));
+      setChangedItems(changedItems.filter((item) => item._id !== formData._id));
     } else {
-      setChangeItems([
-        ...changeItems,
-        {
-          id: itemId,
-          price: e.target.name === "price" ? e.target.value : "",
-          priceB2B: e.target.name === "priceb2b" ? e.target.value : "",
-        },
-      ]);
+      setSelectedItems([...selectedItems, index]);
+      setChangedItems([...changedItems, formData]);
     }
   };
 
   return (
     <>
-      <div className="overflow-x-auto w-full ">
-        <table className="text-left -z-50  w-full ">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>B2b Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products?.map((item, index) => (
-              <tr key={index}>
-                <th className="items-center p-4 whitespace-nowrap">
-                  <label>
-                    <input
-                      type="checkbox"
-                      className="checkbox"
-                      onClick={() =>
-                        setSelectedItems(
-                          changeItems.filter((i) => i._id === item._id)
-                        )
-                      }
-                    />
-                  </label>
-                </th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <img
-                          src={item.image}
-                          alt="Avatar Tailwind CSS Component"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-bold">{item.title.slice(0, 15)}</div>
-                      {/* <div className="text-sm opacity-50">United States</div> */}
-                    </div>
+      <div>
+        <button onClick={() => handleUpdate()}>update</button>
+      </div>
+      <div className="overflow-x-auto w-full">
+        <div className="grid grid-cols-5 justify-center ">
+          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "></button>
+          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
+            Title
+          </button>{" "}
+          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
+            Category
+          </button>{" "}
+          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
+            Price
+          </button>{" "}
+          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
+            B2B Price
+          </button>
+        </div>
+        <>
+          {products.map((item, index) => (
+            <form
+              key={index}
+              className="grid grid-cols-5 justify-center items-center border border-black rounded-xl my-3"
+              onSubmit={(e) => handleSubmit(e, item, index)}
+            >
+              <div className="flex justify-center ">
+                <label>
+                  <button
+                    type="submit"
+                    className={
+                      selectedItems.includes(index) ? "btn btn-success" : "btn"
+                    }
+                  >
+                    {selectedItems.includes(index) ? "Selected" : "Select"}
+                  </button>
+                </label>
+              </div>
+              <div className="flex flex-col  items-center">
+                <div className="avatar">
+                  <div className="mask mask-squircle w-12 h-12">
+                    <img src={item.image} alt="Avatar Tailwind CSS Component" />
                   </div>
-                </td>
-                <td>
-                  <span className="font-semibold">Category</span>:-
-                  <span className="capitalize">{item.category}</span>
-                  <br />
-                  <span className="badge badge-ghost badge-sm">
-                    <span className="font-semibold">Sub-Category</span>:-
-                    <span>{item.subCategory}</span>
-                  </span>
-                </td>
-                <td>
-                  <input
-                    className="p-1 border border-cyan-700 rounded-xl"
-                    inputMode="decimal"
-                    type="number"
-                    name="price"
-                    placeholder={
-                      changeItems.find(
-                        (selectedItem) => selectedItem.id === item._id
-                      )?.price || item.price
-                    }
-                    onChange={(e) => handleChange(item._id, e)}
-                  />
-                </td>
-                <td>
-                  {" "}
-                  <input
-                    className="p-1 border border-cyan-700 rounded-xl"
-                    inputMode="decimal"
-                    type="number"
-                    name="priceb2b"
-                    placeholder={
-                      changeItems.find(
-                        (selectedItem) => selectedItem.id === item._id
-                      )?.priceb2b || item?.priceb2b
-                    }
-                    onChange={(e) => handleChange((item._id, e))}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          {/* foot */}
-        </table>
+                </div>
+                <div>
+                  <p>
+                    <span className="text-lg font-semibold">Title:</span>
+                    <span>{item?.title.slice(0, 30)}</span>
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div>
+                  <p>
+                    <span className="font-semibold">Category:-</span>
+                    <span className="text-md text-red-600 ">
+                      {item?.category}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <span className="font-semibold">Sub-Category:-</span>
+                    <span className="text-md text-teal-600">
+                      {item?.subCategory}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p>
+                  <span className="font-semibold">Price:-</span>
+                  <span className="text-sm">{item?.price}</span>
+                </p>
+                <input
+                  name="price"
+                  disabled={selectedItems.includes(index)}
+                  className={
+                    selectedItems.includes(index)
+                      ? "rounded-lg w-full h-8 placeholder:text-violet-500 outline-none border-2 border-red-600 blur-[2px] focus:border-sky-600 px-2 transition-all duration-100 ease-in-out"
+                      : "rounded-lg w-full h-8 placeholder:text-violet-500 outline-none border-2 border-black focus:border-sky-600 px-2 transition-all duration-100 ease-in-out"
+                  }
+                />
+              </div>
+              <div>
+                <p>
+                  <span className="font-semibold">B2B Price:-</span>
+                  <span className="text-sm">{item?.priceb2b}</span>
+                </p>
+                <input
+                  name="priceb2b"
+                  disabled={selectedItems.includes(index)}
+                  className={
+                    selectedItems.includes(index)
+                      ? "rounded-lg w-full h-8 placeholder:text-violet-500 outline-none border-2 border-red-600 blur-[2px] focus:border-sky-600 px-2 transition-all duration-100 ease-in-out"
+                      : "rounded-lg w-full h-8 placeholder:text-violet-500 outline-none border-2 border-black focus:border-sky-600 px-2 transition-all duration-100 ease-in-out"
+                  }
+                />
+              </div>
+            </form>
+          ))}
+        </>
       </div>
     </>
   );

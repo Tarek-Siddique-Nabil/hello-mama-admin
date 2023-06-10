@@ -1,59 +1,26 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import {
-  createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  updateProfile,
   signOut,
 } from "firebase/auth";
-
 import React, { createContext, useEffect, useState } from "react";
-import app from "../Firebase/firebase.config";
+
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import app from "../Firebase/firebase.config";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 const auth = getAuth(app);
 
 const FirebaseContextProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  console.log(
-    "🚀 ~ file: useFirebase.jsx:21 ~ FirebaseContextProvider ~ user:",
-    user
-  );
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const createUser = async (email, password, role, fullName, nid) => {
-    const userRole = {
-      name: fullName,
-      email: email,
-      role: role,
-      nid: nid,
-    };
-
-    try {
-      const url = `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/role`;
-      const response = await axios.post(url, userRole, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const json = response.data;
-
-      if (json) {
-        toast.success("user created successfully", {
-          position: "top-center",
-        });
-        return createUserWithEmailAndPassword(auth, email, password);
-      }
-    } catch (err) {
-      toast.error(`${err?.message}`, {
-        position: "top-center",
-      });
-    }
-  };
+  const [loading, setLoading] = useState(true);
 
   const signIn = async (email, password) => {
     try {
@@ -64,45 +31,46 @@ const FirebaseContextProvider = ({ children }) => {
       const response = await axios.get(url);
       const json = response.data;
       if (json) {
-        toast.success("Login Successfully", {
-          duration: 1500,
-          position: "top-center",
-        });
-        localStorage.setItem("User email", json.email);
-        if (json?.role === "Secondary Admin") {
-          localStorage.setItem(
-            "User role",
-            `${import.meta.env.VITE_APP_SECRET_CODE_SECONDARY_ADMIN}`
-          );
-        } else if (json?.role === "B2b") {
-          localStorage.setItem(
-            "User role",
-            `${import.meta.env.VITE_APP_SECRET_CODE_B2B}`
-          );
-        } else if (json?.role === "Delivery Boy") {
-          localStorage.setItem(
-            "User role",
-            `${import.meta.env.VITE_APP_SECRET_CODE_DELIVERY_BOY}`
-          );
-        } else if (json?.role === "Admin") {
-          localStorage.setItem(
-            "User role",
-            `${import.meta.env.VITE_APP_SECRET_CODE_ADMIN}`
-          );
-        }
+        if (json?.role === "Admin") {
+          signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              // Signed in
+              const user = userCredential?.user;
 
-        signInWithEmailAndPassword(auth, email, password);
-        setUserRole({ email: json.email, role: json.role });
-      } else {
+              setUser(user);
+              navigate("/");
+              if (user) {
+                toast.success("Login Successfully", {
+                  duration: 1500,
+                  position: "top-center",
+                });
+                localStorage.setItem("User email", user?.email);
+              }
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              return toast.error(`${errorCode}`, {
+                position: "top-center",
+                duration: 1500,
+              });
+            });
+        } else {
+          return toast.error("You Try to  unauthorized login", {
+            position: "top-center",
+            duration: 1500,
+          });
+        }
+      }
+      if (!json?.role) {
         toast.error("User Not Found in DataBase", {
           position: "top-center",
           duration: 1500,
         });
       }
-
-      setLoading(false);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,13 +78,8 @@ const FirebaseContextProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  // why are we doing this?
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log(
-        "🚀 ~ file: useFirebase.jsx:116 ~ unsubscribe ~ currentUser:",
-        currentUser
-      );
       setUser(currentUser);
       setLoading(false);
     });
@@ -124,10 +87,10 @@ const FirebaseContextProvider = ({ children }) => {
     return () => {
       unsubscribe();
     };
-  }, [user]);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, createUser, signIn, logOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );

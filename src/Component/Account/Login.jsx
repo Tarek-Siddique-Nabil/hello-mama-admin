@@ -7,8 +7,6 @@ const Login = () => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  let userRole = localStorage.getItem("User role");
-  console.log("🚀 ~ file: Login.jsx:11 ~ Login ~ userRole:", userRole);
 
   const handleSignIn = async (event) => {
     event.preventDefault();
