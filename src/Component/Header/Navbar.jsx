@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../../Hooks/useFirebase";
@@ -7,6 +7,8 @@ import { toast } from "react-hot-toast";
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
 
+  const navbarRef = useRef(null); // Reference to the navbar component
+
   const storeUser = localStorage.getItem("User email");
   const navigationPath = ["dashboard", "input", "order", "edit", "offer"];
 
@@ -14,9 +16,14 @@ const Navbar = () => {
   const [selection, setSelection] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpand, setIsExpand] = useState(false);
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   const handleScroll = () => {
@@ -27,7 +34,13 @@ const Navbar = () => {
     }
   };
 
-  //framer motion
+  const handleClickOutside = (event) => {
+    if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  // Framer Motion
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -42,6 +55,7 @@ const Navbar = () => {
     open: { opacity: 1 },
     closed: { opacity: 0 },
   };
+
   const variants = {
     open: {
       x: 0,
@@ -58,24 +72,25 @@ const Navbar = () => {
       },
     },
   };
+
   return (
     <>
-      {user && (
-        <div className={isFloating ? "fixed  w-full bg-white z-50" : "z-50"}>
-          <section className=" ">
-            <div
-              className="fixed top-0 bottom-0 left-0 "
-              onClick={handleToggle}
-            >
+      {!user && (
+        <div
+          ref={navbarRef}
+          className={isFloating ? "fixed w-full bg-white z-50" : ""}
+        >
+          <section className="">
+            <div className="fixed top-0 bottom-0 left-0" onClick={handleToggle}>
               <motion.div
-                className="fixed top-0 bottom-0 left-0 "
+                className="fixed top-0 bottom-0 left-0"
                 variants={overlayVariants}
                 animate={isOpen ? "open" : "closed"}
               ></motion.div>
             </div>
 
             <motion.div
-              className=" top-0 bottom-0 left-0 bg-gray-200  fixed z-50"
+              className="top-0 bottom-0 left-0 bg-gray-200 fixed z-50"
               variants={menuVariants}
               animate={isOpen ? "open" : "closed"}
               initial="closed"
@@ -162,6 +177,7 @@ const Navbar = () => {
                         Create Account
                       </NavLink>
                       <NavLink
+                        to={"/allAccount"}
                         className={
                           selection === "user"
                             ? "border border-black px-3 py-1.5 rounded-xl bg-cyan-400 focus:bg-cyan-400 shadow-lg focus:shadow-gray-500 transition-all duration-300 delay-75 ease-in-out"

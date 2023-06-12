@@ -4,21 +4,70 @@ import { toast } from "react-hot-toast";
 
 const TableEdit = () => {
   const { products, updateMultiple } = useContext(CustomHookContext);
+  const [changedProducts, setChangedProducts] = useState(null);
+  // sort by assending
+  const [sortAscending, setSortAscending] = useState(true);
+  const handleSortByTitle = () => {
+    const sortedData = [...products];
+
+    sortedData.sort((a, b) => {
+      const titleA = a.title.toLowerCase();
+      const titleB = b.title.toLowerCase();
+
+      if (titleA < titleB) return sortAscending ? -1 : 1;
+      if (titleA > titleB) return sortAscending ? 1 : -1;
+      return 0;
+    });
+
+    setChangedProducts(sortedData);
+    setSortAscending(!sortAscending);
+  };
+  // sort by price
+  const handleSortByPrice = () => {
+    const sortedData = [...products];
+
+    sortedData.sort((a, b) => {
+      const priceA = parseInt(a.price);
+      const priceB = parseInt(b.price);
+
+      if (priceA < priceB) return sortAscending ? -1 : 1;
+      if (priceA > priceB) return sortAscending ? 1 : -1;
+      return 0;
+    });
+
+    setChangedProducts(sortedData);
+    setSortAscending(!sortAscending);
+  };
+
+  // sort by b2b price
+  const handleSortByB2bPrice = () => {
+    const sortedData = [...products];
+
+    sortedData.sort((a, b) => {
+      const priceA = parseInt(a.priceb2b);
+      const priceB = parseInt(b.priceb2b);
+
+      if (priceA < priceB) return sortAscending ? -1 : 1;
+      if (priceA > priceB) return sortAscending ? 1 : -1;
+      return 0;
+    });
+
+    setChangedProducts(sortedData);
+    setSortAscending(!sortAscending);
+  };
   const [selectedItems, setSelectedItems] = useState([]);
-
-  console.log(
-    "🚀 ~ file: TableEdit.jsx:7 ~ TableEdit ~ selectedItems:",
-    selectedItems
-  );
-
   const [changedItems, setChangedItems] = useState([]);
-  console.log(
-    "🚀 ~ file: TableEdit.jsx:15 ~ TableEdit ~ changedItems:",
-    changedItems
-  );
 
   const handleUpdate = async () => {
-    await updateMultiple(selectedItems);
+    if (changedItems && selectedItems) {
+      await updateMultiple(changedItems);
+      setSelectedItems([]);
+      setChangedItems([]);
+    } else {
+      toast.error("First Select a Product", {
+        position: "top-center",
+      });
+    }
   };
 
   const handleSubmit = (e, i, index) => {
@@ -48,30 +97,42 @@ const TableEdit = () => {
       setChangedItems([...changedItems, formData]);
     }
   };
-
+  const data = changedProducts ?? products;
   return (
     <>
-      <div>
-        <button onClick={() => handleUpdate()}>update</button>
-      </div>
       <div className="overflow-x-auto w-full">
         <div className="grid grid-cols-5 justify-center ">
-          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "></button>
-          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
-            Title
+          <button
+            className="px-2 py-1 rounded-xl border bg-error text-base  border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "
+            onClick={handleUpdate}
+          >
+            {" "}
+            Update
+          </button>
+          <button
+            className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "
+            onClick={handleSortByTitle}
+          >
+            Title {sortAscending ? "Asc" : "Des"}
           </button>{" "}
           <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
             Category
           </button>{" "}
-          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
-            Price
+          <button
+            className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "
+            onClick={handleSortByPrice}
+          >
+            Price {sortAscending ? "Asc" : "Des"}
           </button>{" "}
-          <button className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out ">
-            B2B Price
+          <button
+            className="px-2 py-1 rounded-xl border border-black shadow-xl shadow-gray-400 hover:shadow-cyan-500 transition-all duration-150 ease-in-out "
+            onClick={handleSortByB2bPrice}
+          >
+            B2B Price {sortAscending ? "Asc" : "Des"}
           </button>
         </div>
         <>
-          {products.map((item, index) => (
+          {data?.map((item, index) => (
             <form
               key={index}
               className="grid grid-cols-5 justify-center items-center border border-black rounded-xl my-3"

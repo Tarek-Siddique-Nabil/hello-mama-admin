@@ -22,7 +22,18 @@ const ExistingProduct = () => {
           `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/upload`,
           formData
         );
-        setBaseImage(res?.data?.imageUrl);
+        if (res?.data?.imageUrl) {
+          return setBaseImage(res?.data?.imageUrl);
+        } else {
+          const url = `https://api.imgbb.com/1/upload?key=${
+            import.meta.env.VITE_APP_SECRET_IMG_API_KEY
+          }`;
+          const formData = new FormData();
+          formData.append("image", files[0]);
+          await axios.post(url, formData).then((result) => {
+            setBaseImage(result?.data?.data?.url);
+          });
+        }
       } catch (error) {
         console.log(error);
       }

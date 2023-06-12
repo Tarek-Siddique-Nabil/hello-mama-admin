@@ -23,7 +23,7 @@ export const ContextProvider = ({ children }) => {
   const [cuponCode, setCuponCode] = useState(null);
   const [loading, setLoading] = useState(false);
   const [unit, setUnit] = useState([]);
-  console.log("🚀 ~ file: useHooks.jsx:26 ~ ContextProvider ~ unit:", unit);
+
   // const socket = io(`${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/mew-order`);
   ///product
 
@@ -116,6 +116,7 @@ export const ContextProvider = ({ children }) => {
       });
     }
   };
+  // -----------------------------------------------update b2b product---------------------------------------
   const updateB2b = async (id, body) => {
     setLoading(true);
     try {
@@ -138,6 +139,37 @@ export const ContextProvider = ({ children }) => {
       const newProductsData = [...b2b_products];
       newProductsData[index] = json;
       setB2b_products(newProductsData);
+    } catch (err) {
+      toast.error(err.message, {
+        position: "top-center",
+      });
+    }
+  };
+  //--------------------------------------------------update multiple product--------------------------
+  const updateMultiple = async (products) => {
+    setLoading(true);
+    try {
+      const url = `${
+        import.meta.env.VITE_APP_SECRET_SERVER_SIDE
+      }/product/update-multiple`;
+      const response = await axios.put(
+        url,
+        { products },
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+      const json = response.data;
+      setLoading(false);
+      if (json) {
+        toast.success("All Products Update Successfully", {
+          position: "top-center",
+          duration: 2000,
+        });
+      }
+      setProducts(json?.data);
     } catch (err) {
       toast.error(err.message, {
         position: "top-center",
@@ -607,6 +639,7 @@ export const ContextProvider = ({ children }) => {
         post,
         update,
         updateB2b,
+        updateMultiple,
         b2bData,
         b2bPost,
         deleteProduct,

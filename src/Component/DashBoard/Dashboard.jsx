@@ -41,7 +41,24 @@ const Dashboard = () => {
           `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/upload`,
           formData
         );
-        setSelectedItem({ ...selectedItem, image: res?.data?.imageUrl });
+        if (res?.data?.imageUrl) {
+          return setSelectedItem({
+            ...selectedItem,
+            image: res?.data?.imageUrl,
+          });
+        } else {
+          const url = `https://api.imgbb.com/1/upload?key=${
+            import.meta.env.VITE_APP_SECRET_IMG_API_KEY
+          }`;
+          const formData = new FormData();
+          formData.append("image", files[0]);
+          await axios.post(url, formData).then((result) => {
+            setSelectedItem({
+              ...selectedItem,
+              image: result?.data?.data?.url,
+            });
+          });
+        }
       } catch (error) {
         console.log(error);
       }
@@ -155,7 +172,7 @@ const Dashboard = () => {
             <p className="dark:text-slate-50 text-xl font-bold text-center underline">
               B2B User
             </p>
-            <div className=" flex flex-col overflow-y-scroll gap-4 h-96 border border-black">
+            <div className=" flex flex-col overflow-y-scroll gap-4 h-96 border border-black w-96 rounded-md">
               {b2bData.map((item, index) => (
                 <div
                   key={index}

@@ -62,7 +62,18 @@ const DetailsEdit = () => {
           `${import.meta.env.VITE_APP_SECRET_SERVER_SIDE}/upload`,
           formData
         );
-        setBase_image(res?.data?.imageUrl);
+        if (res?.data?.imageUrl) {
+          return setBase_image(res?.data?.imageUrl);
+        } else {
+          const url = `https://api.imgbb.com/1/upload?key=${
+            import.meta.env.VITE_APP_SECRET_IMG_API_KEY
+          }`;
+          const formData = new FormData();
+          formData.append("image", files[0]);
+          await axios.post(url, formData).then((result) => {
+            setBase_image(result?.data?.data?.url);
+          });
+        }
       } catch (error) {
         console.log(error);
       }

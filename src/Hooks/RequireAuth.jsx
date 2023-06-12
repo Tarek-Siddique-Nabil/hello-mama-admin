@@ -771,7 +771,7 @@ z"
     );
   }
 
-  if (!user?.email) {
+  if (user?.email) {
     return <Navigate to="/login" replace />;
   }
 
