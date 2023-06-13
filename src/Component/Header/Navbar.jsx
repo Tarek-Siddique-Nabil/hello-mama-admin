@@ -75,7 +75,7 @@ const Navbar = () => {
 
   return (
     <>
-      {!user && (
+      {user && (
         <div
           ref={navbarRef}
           className={isFloating ? "fixed w-full bg-white z-50" : ""}
