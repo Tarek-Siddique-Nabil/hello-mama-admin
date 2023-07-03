@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { CustomHookContext } from "../../../Hooks/useHooks";
-import { toast } from "react-hot-toast";
+
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 
@@ -16,11 +16,11 @@ const DetailsEdit = () => {
     }
   }
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [priceb2b, setPriceb2b] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
+  const [quantity, setQuantity] = useState(5);
   const [base_image, setBase_image] = useState(null);
-  const [description, setDescription] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [highLightPointList, setHighLightPointList] = useState(
     selectedItem?.spec?.map((item) => ({
@@ -105,6 +105,7 @@ const DetailsEdit = () => {
       title: title.value || selectedItem?.title,
       price: price.value || selectedItem?.price,
       priceb2b: priceb2b.value || selectedItem?.priceb2b,
+      quantity: quantity,
       description: description.value || selectedItem?.description,
       category: selectedCategory || selectedItem?.category,
       subCategory: selectedSubCategory || selectedItem?.subCategory,
@@ -115,6 +116,7 @@ const DetailsEdit = () => {
 
     await update(selectedItem?._id, data);
     e.target.reset();
+    setQuantity(5);
   };
   if (loading) {
     return (
@@ -263,6 +265,16 @@ const DetailsEdit = () => {
                   />
                 </div>
                 <div className="flex flex-col">
+                  <span>Quantity:-{selectedItem?.quantity}</span>
+                  <input
+                    name="quantity"
+                    placeholder="Quantity"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className="w-11/12 px-4 py-2.5 border border-black rounded-xl"
+                  />
+                </div>
+                <div className="flex flex-col">
                   <span>Category:-{selectedItem?.category}</span>
                   <select
                     value={selectedCategory}
@@ -335,11 +347,7 @@ const DetailsEdit = () => {
                     <br />
                     {selectedItem?.description}
                   </span>
-                  <input
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="h-20"
-                    name="description"
-                  />
+                  <input className="h-20" name="description" />
                 </div>
 
                 {

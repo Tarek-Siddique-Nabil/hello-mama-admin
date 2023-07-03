@@ -16,6 +16,7 @@ const Product_Input = () => {
   const [subCategory, setSubCategory] = useState(null);
 
   const [base_image, setBaseImage] = useState(null);
+  const [quantity, setQuantity] = useState(5);
   const handleBaseImage = async (e) => {
     e.preventDefault();
     const { name, files } = e.target;
@@ -123,6 +124,7 @@ const Product_Input = () => {
       priceb2b: e.target.b2b_price.value,
       shipping: e.target.shipping.value,
       description: e.target.description.value,
+      quantity: quantity,
       category: category,
       subCategory: subCategory,
       image: base_image,
@@ -147,6 +149,7 @@ const Product_Input = () => {
     setCategory(null);
     setSubCategory(null);
     setBaseImage(null);
+    setQuantity(5);
     setHighLightPointList([{ highLightPoint: "" }]);
     setVariableList([{ price: "", variety: "", image: null }]);
   };
@@ -241,6 +244,24 @@ const Product_Input = () => {
               <label className="dark:text-white">{item?.value}</label>
             </span>
           ))}
+        </div>
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Enter Quantity</span>
+          </label>
+          <label className="input-group">
+            <span>Quantity</span>
+            <input
+              inputMode="numeric"
+              min={5}
+              type="number"
+              placeholder="Quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              className="input input-bordered"
+              required={true}
+            />
+          </label>
         </div>
         <div className="form-control">
           <label className="label">
